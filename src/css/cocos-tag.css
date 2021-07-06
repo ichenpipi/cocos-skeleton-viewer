@@ -1,0 +1,112 @@
+/* 
+  Cocos Creator 橙黑风格标签
+  版本: 20210706
+  作者: 陈皮皮（ifaswind）
+  主页: https://gitee.com/ifaswind
+  公众号: 菜鸟小栈
+*/
+
+/* 下拉选择器 */
+select {
+  background-color: #2e2e2e;
+  outline: none;
+  box-sizing: border-box;
+  border: 1px solid #171717;
+  border-radius: 100px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #bdbdbd;
+  cursor: pointer;
+  /* 替换默认的箭头 */
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA+ElEQVRYR+2VXw6CMAzGV3YUjSZ6CsI4l3gutnALH/xzEB8spokSQphbiwkv5RHafb9+awuYlR9YWd8ogDqgDqgDPx3w3h8A4FlV1UOysLz3O2stlmV5j+VHAbqu2yLijRIR8VzXdcOBaNu2KYriRDl93x+dc5e5/ChACGFjjBnIORBj8Q/A3jl3ZQFQcAiBKhgqz4GYiqdyklPAgeCKU5FJgFwnJOLZACkIqTgLgILnhOj9t9slE5N1BePunUKMv6Uajj0Fsbmfg5CIs68g5oRUfBEAJdOqBYCXdFUvBuCsZva/4B+H55zBnoKcQzkxCqAOqAOrO/AGwnWWIa30xvoAAAAASUVORK5CYII=);
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: right 3px center;
+}
+
+/* 下拉选择器:虚指 */
+select:hover {
+  border-color: #888888;
+}
+
+/* 输入框 */
+input {
+  background-color: #262626;
+  box-sizing: border-box;
+  padding: 0 5px;
+  border: 1px solid #171717;
+  border-radius: 3px;
+  color: #fd942b;
+  outline: none;
+}
+
+/* 输入框::占位符 */
+input::placeholder {
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* 数字输入框 */
+input[type='number'] {
+  width: 50px !important;
+}
+
+/* 数字输入框::增减按钮 */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  /* -webkit-appearance: none; */
+  /* margin: 0; */
+  margin-right: -2px;
+}
+
+/* 复选框 */
+input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  background-image: none;
+  background-color: #262626;
+  border: 1px solid #171717;
+  border-radius: 3px;
+  padding-left: 0;
+  position: relative !important;
+  flex: 0 !important;
+  margin: 0;
+  color: #fd942b;
+  outline: none;
+  cursor: pointer;
+}
+
+/* 复选框:勾选 */
+input[type='checkbox']:checked::after {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  content: '';
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABKUlEQVRYR+2W2w2DMAxF41ZdBnWzqjMQZkBdjWUqkiqUgCHOO4Ef+EECwTlO7AvATj7gZD67BA5bgW/fcLXdj/cwnfVxiMD4aVomYQILKTssUV0Aw3XVWKKqgFr2G0BLTZqWqCbggq8NIHkVgSD43A/FBag9J8MOJL+/hq6oQGjlbIYrMUNAVSAEg/28+iI7BW4IuObVJZAK3wj45tUmkANfBFyNs08uLBIKd70DgroWNY0WKAGfVmBUHwlLWuFqcRWl4OsWREioh2zxuukTYtWoPlrGcOyfnIEkc9s3gsb9QLg5hiUkIuB0EOVIRMJJAXUxaTsS4FaBaIlEuFMgWCID7hXwSmTCgwSsEgXgwQJ/CZSYheBRAlpCEP/20UGFHij6R5Qicgn8AIQ23JRIyuB1AAAAAElFTkSuQmCC);
+  background-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 输入框:虚指 */
+input:hover {
+  border-color: #888888;
+}
+
+/* 超链接 */
+a {
+  color: #fd942b;
+  text-decoration: none;
+}
+
+/* 超链接:虚指 */
+a:hover {
+  text-decoration: underline;
+}

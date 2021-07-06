@@ -1,0 +1,111 @@
+#app {
+  width: 100%;
+  height: 100%;
+  background-color: #454545;
+  box-sizing: border-box;
+  padding: 10px;
+  color: #bdbdbd;
+  animation: fade-in 0.3s;
+  animation-fill-mode: forwards;
+}
+
+/* 渐显 */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 主布局 */
+.layout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 预览区 */
+.view {
+  width: 100%;
+  min-height: 0;
+  background-color: #4c4c4c;
+  position: relative;
+  flex: 1;
+}
+
+/* 画布 */
+.canvas {
+  width: 100%;
+  height: 100%;
+  background-color: #4c4c4c;
+}
+
+/* 版本号 */
+.version {
+  height: 16px;
+  opacity: 0.3;
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  line-height: 16px;
+  font-size: 11px;
+  color: #bdbdbd;
+}
+
+/* 按钮容器 */
+.buttons {
+  height: 16px;
+  opacity: 0.5;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+}
+
+/* 信息:虚指 */
+.info:hover {
+  color: #09f;
+}
+
+/* 按钮容器 > 子元素 */
+.buttons > * {
+  margin-right: 5px;
+}
+
+/* 信息,按钮 */
+.info,
+.button {
+  width: 16px;
+  height: 16px;
+  color: #bdbdbd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 信息,按钮:虚指 */
+.info:hover,
+.button:hover {
+  color: #09f;
+}
+
+/* 按钮:激活 */
+.button:active {
+  color: #fd942b;
+}
+
+/* 信息,按钮 图标 */
+.info .icon,
+.button .icon {
+  width: 13px;
+  height: 13px;
+}
+
+[v-cloak] {
+  display: none;
+}
