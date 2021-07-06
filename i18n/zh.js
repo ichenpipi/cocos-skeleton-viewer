@@ -13,7 +13,7 @@ module.exports = {
     'currentLatest': '当前已是最新版本！',
     'hasNewVersion': '发现新版本：',
     'releases': '发行版：https://gitee.com/ifaswind/ccc-skeleton-viewer/releases',
-    'cocosStore': 'Cocos 商店：http://store.cocos.com/app/detail/2745',
+    'cocosStore': 'Cocos 商店：http://store.cocos.com/app/detail/3008',
     // view panel
     'skin': '皮肤',
     'animation': '动画',

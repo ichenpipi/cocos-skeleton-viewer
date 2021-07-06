@@ -13,7 +13,7 @@ module.exports = {
     'currentLatest': 'Currently the latest version!',
     'hasNewVersion': 'New version found: ',
     'releases': 'Releases: https://gitee.com/ifaswind/ccc-skeleton-viewer/releases',
-    'cocosStore': 'Cocos Store: http://store.cocos.com/app/detail/2745',
+    'cocosStore': 'Cocos Store: http://store.cocos.com/app/detail/3008',
     // view panel
     'skin': 'Skin',
     'animation': 'Animation',

@@ -52,6 +52,18 @@ Engine: Cocos Creator 2.x
 
 ## Download & Installation
 
+### Install from Cocos Store
+
+You can find this extension in Cocos Store now, click on *Extension -> Cocos Store* option to open the Cocos Store.
+
+Enter "**Skeleton Viewer**" in the search bar, find it and then install it.
+
+![cocos-store](https://gitee.com/ifaswind/image-storage/raw/master/repositories/ccc-skeleton-viewer/cocos-store.png)
+
+*Skeleton Viewer：[http://store.cocos.com/app/detail/3008](http://store.cocos.com/app/detail/3008)*
+
+
+
 ### Download from git repository
 
 Click [here](https://gitee.com/ifaswind/ccc-skeleton-viewer/releases) or go to the release panel, download the latest version package of this extension.

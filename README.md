@@ -52,6 +52,18 @@
 
 ## 下载 & 安装
 
+### 扩展商店安装
+
+本扩展已上架 Cocos 商店，点击 Cocos Creator 编辑器顶部菜单栏中的 *扩展 -> 扩展商店* 即可打开扩展商店。
+
+在上方搜索栏中输入“**骨骼查看器**”并搜索就可以找到本插件，点进去直接安装即可（建议安装到全局）。
+
+![cocos-store](https://gitee.com/ifaswind/image-storage/raw/master/repositories/ccc-skeleton-viewer/cocos-store.png)
+
+*骨骼查看器：[http://store.cocos.com/app/detail/3008](http://store.cocos.com/app/detail/3008)*
+
+
+
 ### 自行下载安装
 
 在[此处](https://gitee.com/ifaswind/ccc-skeleton-viewer/releases)或仓库发行版处下载最新的扩展压缩包。
