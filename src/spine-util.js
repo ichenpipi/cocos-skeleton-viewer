@@ -12,6 +12,7 @@ const SpineUtil = {
         '3.6': null,
         '3.7': null,
         '3.8': null,
+        '4.0': null,
     },
 
     /**

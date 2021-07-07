@@ -271,6 +271,11 @@ const App = {
         RendererUtil.print('warn', translate('noVersion'));
         return false;
       }
+      console.log('spine version', version);
+      // 兼容 3.8.75
+      if (version === '3.8.75') {
+        version = '4.0';
+      }
       // 处理版本号（保留前两个分量）
       version = version.split('.').slice(0, 2).join('.');
       // 获取目标版本的 Spine 运行时对象
@@ -620,8 +625,8 @@ const App = {
       // 骨骼位置以及缩放
       const bounds = this.bounds;
       // 计算中心点
-      const centerX = bounds.offset.x + (bounds.size.x / 2),
-        centerY = bounds.offset.y + (bounds.size.y / 2);
+      const centerX = (bounds.offset.x + (bounds.size.x / 2)) || 0,
+        centerY = (bounds.offset.y + (bounds.size.y / 2)) || 0;
       // 计算缩放比例
       const ratioX = bounds.size.x / canvas.width,
         ratioY = bounds.size.y / canvas.height;
