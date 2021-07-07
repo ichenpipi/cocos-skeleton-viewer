@@ -271,13 +271,13 @@ const App = {
         RendererUtil.print('warn', translate('noVersion'));
         return false;
       }
-      console.log('spine version', version);
-      // 兼容 3.8.75
+      console.log('Skeleton spine version', version);
+      // 兼容 Spine 3.8.75 的资源
       if (version === '3.8.75') {
         version = '4.0';
       }
       // 处理版本号（保留前两个分量）
-      version = version.split('.').slice(0, 2).join('.');
+      version = version.split('.').slice(0, 2).map(v => parseInt(v)).join('.');
       // 获取目标版本的 Spine 运行时对象
       const spine = SpineUtil.getSpine(version);
       if (!spine) {
@@ -287,6 +287,7 @@ const App = {
       }
       window.spine = spine;
       this.version = spine.version;
+      console.log('Spine runtime version', spine.version);
       return true;
     },
 
