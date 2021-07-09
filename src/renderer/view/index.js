@@ -268,8 +268,11 @@ const App = {
       // 资源对应的 Spine 运行时版本
       let version = this.getAssetSpineVersion(this.assets.json || this.assets.skel);
       if (!version) {
-        RendererUtil.print('warn', translate('noVersion'));
-        return false;
+        // RendererUtil.print('warn', translate('noVersion'));
+        // return false;
+        console.warn('Unable to identify Spine version of asset!');
+        // 默认使用 3.8 的 Runtime
+        version = "3.8";
       }
       console.log('Skeleton spine version', version);
       // 处理版本号（保留前两个分量）
