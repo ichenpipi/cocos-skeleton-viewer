@@ -178,7 +178,7 @@ function identifyEditorSelection(uuids) {
     } else if (type === 'texture') {
       // 纹理资源
       texturePath = path;
-    } else if (path.endsWith('.atlas')) {
+    } else if (path.endsWith('.atlas') || path.endsWith('.txt')) {
       // 图集资源
       atlasPath = path;
     }
@@ -227,7 +227,8 @@ function identifyDialogSelection(selection) {
         texturePath = path;
         break;
       }
-      case '.atlas': {
+      case '.atlas':
+      case '.txt': {
         atlasPath = path;
         break;
       }
@@ -268,6 +269,10 @@ function processPaths(paths) {
   if (!atlasPath) {
     // 暴力查找
     atlasPath = getRelatedFile(spinePath, 'atlas');
+    // 还没有的话再试试 txt 格式
+    if (!atlasPath) {
+      atlasPath = getRelatedFile(spinePath, 'txt');
+    }
   }
   // 找不到图集啊
   if (!atlasPath) {
