@@ -2,10 +2,11 @@
   "name": "ccc-skeleton-viewer",
   "version": "1.0.1.20210707",
   "description": "用于快速预览骨骼动画，提供独立窗口，也可以附着在编辑器中...",
-  "author": "ifaswind（陈皮皮）",
-  "author-info": {
-    "wechat": "im_chenpipi",
+  "author": {
+    "name": "ifaswind（陈皮皮）",
     "email": "952157129@qq.com",
+    "url": "https://chenpipi.cn",
+    "wechat": "im_chenpipi",
     "git-home": "https://gitee.com/ifaswind",
     "official-account": "公众号「菜鸟小栈」"
   },
@@ -13,6 +14,7 @@
     "type": "git",
     "url": "https://gitee.com/ifaswind/ccc-skeleton-viewer"
   },
+  "license": "MIT",
   "main": "src/main.js",
   "main-menu": {
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.view": {

@@ -1,5 +1,8 @@
 const fetch = require('../lib/node-fetch');
 
+/** 仓库信息 */
+const REPOSITORY = require('../package.json').repository;
+
 /**
  * 更新器
  */
@@ -9,7 +12,7 @@ const Updater = {
      * 远端地址
      * @type {string}
      */
-    remote: 'https://gitee.com/ifaswind/ccc-skeleton-viewer',
+    remote: REPOSITORY.url,
 
     /**
      * 分支
