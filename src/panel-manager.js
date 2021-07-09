@@ -47,7 +47,7 @@ const PanelManager = {
         // 创建窗口
         const winSize = [500, 355],
             winPos = this.getPosition(winSize, 'center'),
-            win = settingPanel = new BrowserWindow({
+            win = this.settingPanel = new BrowserWindow({
                 width: winSize[0],
                 height: winSize[1],
                 minWidth: winSize[0],
