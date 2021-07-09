@@ -6,7 +6,7 @@
 
 **Used to preview skeleton animation. Provide a stand-alone panel and can also be attached to the editor window.**
 
-*Currently, only versions 3.5~3.8 of Spine resources are supported. DragonBone resources would be supported in the future.*
+*Currently, only versions 3.5~4.0 of Spine resources are supported. DragonBone resources would be supported in the future.*
 
 
 
