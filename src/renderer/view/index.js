@@ -736,18 +736,20 @@ const App = {
       if (event.path[0] !== this.canvas) {
         return;
       }
-      // 缩放
+      // 当前缩放
       let scale = this.viewScale;
+      // 缩放步长
+      const step = Math.abs(scale) >= 1 ? 0.1 : 0.05;
       // 方向
       if (event.wheelDelta > 0) {
         // 向上（放大）
-        scale += 0.1;
+        scale += step;
       } else {
         // 向下（缩小）
-        scale -= 0.1;
+        scale -= step;
       }
       // 处理精度
-      scale = Math.round(scale * 10) / 10;
+      scale = Math.round(scale * 100) / 100;
       // 设置缩放
       this.viewScale = scale;
     },
