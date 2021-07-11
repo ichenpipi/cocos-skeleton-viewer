@@ -1,10 +1,18 @@
 const fetch = require('../lib/node-fetch');
 
+/** 本地包信息 */
+const LOCAL_PACKAGE = require('../package.json');
+
+/** 本地版本 */
+const LOCAL_VERSION = LOCAL_PACKAGE.version;
+
 /** 仓库信息 */
-const REPOSITORY = require('../package.json').repository;
+const REPOSITORY = LOCAL_PACKAGE.repository;
 
 /**
  * 更新器
+ * @author ifaswind (陈皮皮)
+ * @version 20210712
  */
 const Updater = {
 
@@ -59,7 +67,7 @@ const Updater = {
      * @returns {string}
      */
     getLocalVersion() {
-        return require('../package.json').version;
+        return LOCAL_VERSION;
     },
 
     /**

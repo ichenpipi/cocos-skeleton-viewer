@@ -1,5 +1,6 @@
 /**
  * 浏览器工具
+ * @author ifaswind (陈皮皮)
  * @version 20210621
  */
 const BrowserUtil = {

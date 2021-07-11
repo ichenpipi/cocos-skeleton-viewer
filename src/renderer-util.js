@@ -5,6 +5,7 @@ const PACKAGE_NAME = require('../package.json').name;
 
 /**
  * 渲染进程工具
+ * @author ifaswind (陈皮皮)
  * @version 20210703
  */
 const RendererUtil = {

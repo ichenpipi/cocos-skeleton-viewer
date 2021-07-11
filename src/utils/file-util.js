@@ -1,30 +1,64 @@
 const Fs = require('fs');
 const Path = require('path');
+const { promisify } = require('util');
 
 /**
- * 文件工具
- * @version 20210621
+ * 文件工具 (Promise)
+ * @author ifaswind (陈皮皮)
+ * @version 20210711
  */
 const FileUtil = {
+
+    /**
+     * 获取文件状态
+     * @param {Fs.PathLike} path 路径
+     * @returns {Promise<Fs.stats>}
+     */
+    stat: promisify(Fs.stat),
+
+    /**
+     * 读取文件夹
+     * @param {Fs.PathLike} path 路径
+     * @returns {Promise<string[]>}
+     */
+    readdir: promisify(Fs.readdir),
+
+    /**
+     * 读取文件
+     * @param {Fs.PathLike} path 路径
+     * @returns {Promise<Buffer>}
+     */
+    readFile: promisify(Fs.readFile),
+
+    /**
+     * 写入文件
+     * @param {Fs.PathLike} path 路径
+     * @param {string | NodeJS.ArrayBufferView} data 数据
+     * @param {Fs.WriteFileOptions?} options 选项
+     * @returns {Promise<void>}
+     */
+    writeFile: promisify(Fs.writeFile),
 
     /**
      * 复制文件/文件夹
      * @param {Fs.PathLike} srcPath 源路径
      * @param {Fs.PathLike} destPath 目标路径
      */
-    copy(srcPath, destPath) {
+    async copy(srcPath, destPath) {
         if (!Fs.existsSync(srcPath)) {
             return;
         }
-        const stats = Fs.statSync(srcPath);
+        const stats = await FileUtil.stat(srcPath);
         if (stats.isDirectory()) {
-            if (!Fs.existsSync(destPath)) Fs.mkdirSync(destPath);
-            const names = Fs.readdirSync(srcPath);
+            if (!Fs.existsSync(destPath)) {
+                Fs.mkdirSync(destPath);
+            }
+            const names = await FileUtil.readdir(srcPath);
             for (const name of names) {
-                this.copy(Path.join(srcPath, name), Path.join(destPath, name));
+                FileUtil.copy(Path.join(srcPath, name), Path.join(destPath, name));
             }
         } else if (stats.isFile()) {
-            Fs.writeFileSync(destPath, Fs.readFileSync(srcPath));
+            await FileUtil.writeFile(destPath, await FileUtil.readFile(srcPath));
         }
     },
 
@@ -32,15 +66,15 @@ const FileUtil = {
      * 删除文件/文件夹
      * @param {Fs.PathLike} path 路径
      */
-    delete(path) {
+    async delete(path) {
         if (!Fs.existsSync(path)) {
             return;
         }
-        const stats = Fs.statSync(path);
+        const stats = await FileUtil.stat(path);
         if (stats.isDirectory()) {
-            const names = Fs.readdirSync(path);
+            const names = await FileUtil.readdir(path);
             for (const name of names) {
-                this.delete(Path.join(path, name));
+                FileUtil.delete(Path.join(path, name));
             }
             Fs.rmdirSync(path);
         } else if (stats.isFile()) {
@@ -53,18 +87,18 @@ const FileUtil = {
      * @param {Fs.PathLike} path 路径
      * @param {(filePath: Fs.PathLike, stat: Fs.Stats) => void} handler 处理函数
      */
-    map(path, handler) {
+    async map(path, handler) {
         if (!Fs.existsSync(path)) {
             return;
         }
-        const stats = Fs.statSync(path);
-        if (stats.isDirectory()) {
-            const names = Fs.readdirSync(path);
-            for (const name of names) {
-                this.map(Path.join(path, name), handler);
-            }
-        } else if (stats.isFile()) {
+        const stats = await FileUtil.stat(path);
+        if (stats.isFile()) {
             handler(path, stats);
+        } else {
+            const names = await FileUtil.readdir(path);
+            for (const name of names) {
+                await FileUtil.map(Path.join(path, name), handler);
+            }
         }
     },
 

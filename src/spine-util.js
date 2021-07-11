@@ -1,5 +1,6 @@
 /**
  * Spine 工具
+ * @author ifaswind (陈皮皮)
  * @version 20210703
  */
 const SpineUtil = {

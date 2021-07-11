@@ -1,94 +1,10 @@
 const { dialog } = require('electron');
 const Fs = require('fs');
 const Path = require('path');
-const I18n = require('./i18n');
 const PanelManager = require('./panel-manager');
 const MainUtil = require('./main-util');
-const Updater = require('./updater');
-
-/** 语言 */
-const LANG = Editor.lang;
-
-/**
- * i18n
- * @param {string} key
- * @returns {string}
- */
-const translate = (key) => I18n.translate(LANG, key);
-
-/** 扩展名称 */
-const EXTENSION_NAME = translate('name');
-
-module.exports = {
-
-  /**
-   * 扩展消息
-   * @type {{ [key: string]: Function }}
-   */
-  messages: {
-
-    /**
-     * 编辑器选中事件回调
-     * @param {Electron.IpcMainEvent} event 
-     * @param {string} type 类型
-     * @param {string[]} uuids uuids
-     */
-    'selection:selected'(event, type, uuids) {
-      if (!renderer || renderer.isDestroyed()) {
-        renderer = null;
-        return;
-      }
-      if (type !== 'asset') {
-        return;
-      }
-      // 检查
-      checkCurrentSelection();
-    },
-
-    /**
-     * 打开预览面板
-     */
-    'open-view-panel'() {
-      PanelManager.openViewPanel();
-    },
-
-    /**
-     * 打开设置面板
-     */
-    'open-setting-panel'() {
-      PanelManager.openSettingPanel();
-    },
-
-    /**
-     * 检查更新
-     */
-    'force-check-update'() {
-      checkUpdate(true);
-    },
-
-  },
-
-  /**
-   * 生命周期：加载
-   */
-  load() {
-    MainUtil.on('check-update', onCheckUpdateEvent);
-    MainUtil.on('print', onPrintEvent);
-    MainUtil.on('ready', onReadyEvent);
-    MainUtil.on('select', onSelectEvent);
-  },
-
-  /**
-   * 生命周期：卸载
-   */
-  unload() {
-    MainUtil.removeAllListeners('check-update');
-    MainUtil.removeAllListeners('print');
-    MainUtil.removeAllListeners('ready');
-    MainUtil.removeAllListeners('select');
-  },
-
-};
+const { print, translate, checkUpdate } = require('./editor-util');
+const ConfigManager = require('./config-manager');
 
 /**
  * （渲染进程）检查更新回调
@@ -335,51 +251,80 @@ function updateRenderer(assets) {
   MainUtil.send(renderer, 'assets-selected', assets);
 }
 
-/**
- * 打印信息到控制台
- * @param {'log' | 'info' | 'warn' | 'error' | string} type 类型 | 内容
- * @param {string} content 内容
- */
-function print(type, content = undefined) {
-  if (content == undefined) {
-    content = type;
-    type = 'log';
-  }
-  const message = `[${EXTENSION_NAME}] ${content}`;
-  switch (type) {
-    default:
-    case 'log': {
-      Editor.log(message);
-      break;
-    }
-    case 'info': {
-      Editor.info(message);
-      break;
-    }
-    case 'warn': {
-      Editor.warn(message);
-      break;
-    }
-    case 'error': {
-      Editor.error(message);
-      break;
-    }
-  }
-}
+module.exports = {
 
-/**
- * 检查更新
- * @param {boolean} logWhatever 无论有无更新都打印提示
- */
-async function checkUpdate(logWhatever) {
-  const hasNewVersion = await Updater.check();
-  // 打印到控制台
-  if (hasNewVersion) {
-    const remoteVersion = await Updater.getRemoteVersion();
-    print('info', `${translate('hasNewVersion')}${remoteVersion}`);
-    print('info', translate('releases'));
-    print('info', translate('cocosStore'));
-  } else if (logWhatever) {
-    print('info', translate('currentLatest'));
-  }
-}
+  /**
+   * 扩展消息
+   * @type {{ [key: string]: Function }}
+   */
+  messages: {
+
+    /**
+     * 编辑器选中事件回调
+     * @param {Electron.IpcMainEvent} event 
+     * @param {string} type 类型
+     * @param {string[]} uuids uuids
+     */
+    'selection:selected'(event, type, uuids) {
+      if (!renderer || renderer.isDestroyed()) {
+        renderer = null;
+        return;
+      }
+      if (type !== 'asset') {
+        return;
+      }
+      // 检查
+      checkCurrentSelection();
+    },
+
+    /**
+     * 打开预览面板
+     */
+    'open-view-panel'() {
+      PanelManager.openViewPanel();
+    },
+
+    /**
+     * 打开设置面板
+     */
+    'open-setting-panel'() {
+      PanelManager.openSettingPanel();
+    },
+
+    /**
+     * 检查更新
+     */
+    'force-check-update'() {
+      checkUpdate(true);
+    },
+
+  },
+
+  /**
+   * 生命周期：加载
+   */
+  load() {
+    MainUtil.on('check-update', onCheckUpdateEvent);
+    MainUtil.on('print', onPrintEvent);
+    MainUtil.on('ready', onReadyEvent);
+    MainUtil.on('select', onSelectEvent);
+    // 自动检查更新
+    const config = ConfigManager.get();
+    if (config.autoCheckUpdate) {
+      // 延迟一段时间
+      const delay = 6 * 60 * 1000;
+      setTimeout(() => checkUpdate(false), delay);
+    }
+  },
+
+  /**
+   * 生命周期：卸载
+   */
+  unload() {
+    MainUtil.removeAllListeners('check-update');
+    MainUtil.removeAllListeners('print');
+    MainUtil.removeAllListeners('ready');
+    MainUtil.removeAllListeners('select');
+  },
+
+};
