@@ -27,11 +27,11 @@ Editor.Panel.extend({
     ready() {
         const root = this.shadowRoot;
         // 加载样式表
-        // loadCss(root, join(__dirname, '../../css/cocos-tag.css'));
-        // loadCss(root, join(__dirname, '../../css/cocos-class.css'));
+        // loadCss(root, join(__dirname, '../../eazax/css/cocos-tag.css'));
+        // loadCss(root, join(__dirname, '../../eazax/css/cocos-class.css'));
         // loadCss(root, join(__dirname, 'index.css'));
-        loadCSS(root, join(PACKAGE_PATH, 'src/css/cocos-tag.css'));
-        loadCSS(root, join(PACKAGE_PATH, 'src/css/cocos-class.css'));
+        loadCSS(root, join(PACKAGE_PATH, 'src/eazax/css/cocos-tag.css'));
+        loadCSS(root, join(PACKAGE_PATH, 'src/eazax/css/cocos-class.css'));
         loadCSS(root, join(DIR_PATH, 'index.css'));
         // 先替换掉编辑器内置的 Vue
         const oldVue = window.Vue;

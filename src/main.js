@@ -2,9 +2,36 @@ const { dialog } = require('electron');
 const Fs = require('fs');
 const Path = require('path');
 const PanelManager = require('./panel-manager');
-const MainUtil = require('./main-util');
-const { print, translate, checkUpdate } = require('./editor-util');
 const ConfigManager = require('./config-manager');
+const MainUtil = require('./eazax/main-util');
+const { print, translate, checkUpdate } = require('./eazax/editor-util');
+
+/**
+ * 生命周期：加载
+ */
+function load() {
+  MainUtil.on('check-update', onCheckUpdateEvent);
+  MainUtil.on('print', onPrintEvent);
+  MainUtil.on('ready', onReadyEvent);
+  MainUtil.on('select', onSelectEvent);
+  // 自动检查更新
+  const config = ConfigManager.get();
+  if (config.autoCheckUpdate) {
+    // 延迟一段时间
+    const delay = 6 * 60 * 1000;
+    setTimeout(() => checkUpdate(false), delay);
+  }
+}
+
+/**
+ * 生命周期：卸载
+ */
+function unload() {
+  MainUtil.removeAllListeners('check-update');
+  MainUtil.removeAllListeners('print');
+  MainUtil.removeAllListeners('ready');
+  MainUtil.removeAllListeners('select');
+}
 
 /**
  * （渲染进程）检查更新回调
@@ -300,31 +327,8 @@ module.exports = {
 
   },
 
-  /**
-   * 生命周期：加载
-   */
-  load() {
-    MainUtil.on('check-update', onCheckUpdateEvent);
-    MainUtil.on('print', onPrintEvent);
-    MainUtil.on('ready', onReadyEvent);
-    MainUtil.on('select', onSelectEvent);
-    // 自动检查更新
-    const config = ConfigManager.get();
-    if (config.autoCheckUpdate) {
-      // 延迟一段时间
-      const delay = 6 * 60 * 1000;
-      setTimeout(() => checkUpdate(false), delay);
-    }
-  },
+  load,
 
-  /**
-   * 生命周期：卸载
-   */
-  unload() {
-    MainUtil.removeAllListeners('check-update');
-    MainUtil.removeAllListeners('print');
-    MainUtil.removeAllListeners('ready');
-    MainUtil.removeAllListeners('select');
-  },
+  unload,
 
 };

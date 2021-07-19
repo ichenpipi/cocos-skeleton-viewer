@@ -1,19 +1,20 @@
 const { BrowserWindow } = require('electron');
-const { language, translate } = require('./editor-util');
+const { language, translate } = require('./eazax/editor-util');
+const PackageUtil = require('./eazax/package-util');
 
 /** 包名 */
-const PACKAGE_NAME = require('../package.json').name;
+const PACKAGE_NAME = PackageUtil.name;
 
 /** 扩展名称 */
 const EXTENSION_NAME = translate('name');
 
 /**
- * 获取窗口位置
+ * 计算窗口位置
  * @param {[number, number]} size 窗口尺寸
  * @param {'top' | 'center'} anchor 锚点
  * @returns {[number, number]}
  */
-function getPosition(size, anchor) {
+function calcWindowPosition(size, anchor) {
     // 根据编辑器窗口的位置和尺寸来计算
     const editorWin = BrowserWindow.getFocusedWindow(),
         editorSize = editorWin.getSize(),
@@ -36,7 +37,7 @@ function getPosition(size, anchor) {
 }
 
 /**
- * 面板管理器
+ * 面板管理器 (主进程)
  */
 const PanelManager = {
 
@@ -64,7 +65,7 @@ const PanelManager = {
         }
         // 创建窗口
         const winSize = [500, 355],
-            winPos = getPosition(winSize, 'center'),
+            winPos = calcWindowPosition(winSize, 'center'),
             win = this.settingPanel = new BrowserWindow({
                 width: winSize[0],
                 height: winSize[1],

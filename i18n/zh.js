@@ -3,6 +3,11 @@ module.exports = {
     'view': '预览',
     'setting': '设置',
     'checkUpdate': '检查更新',
+    // update
+    'currentLatest': '当前已是最新版本！',
+    'hasNewVersion': '发现新版本：',
+    'releases': '发行版：https://gitee.com/ifaswind/ccc-skeleton-viewer/releases',
+    'cocosStore': 'Cocos 商店：http://store.cocos.com/app/detail/3008',
     // main
     'skeletonAssets': 'Spine 资源',
     'selectAssets': '选择骨骼动画资源',
@@ -10,11 +15,7 @@ module.exports = {
     'noSkeleton': '未选择任何骨骼资源！',
     'noTexture': '未找到纹理资源！',
     'noAtlas': '未找到图集资源！',
-    'currentLatest': '当前已是最新版本！',
-    'hasNewVersion': '发现新版本：',
-    'releases': '发行版：https://gitee.com/ifaswind/ccc-skeleton-viewer/releases',
-    'cocosStore': 'Cocos 商店：http://store.cocos.com/app/detail/3008',
-    // view panel
+    // view
     'skin': '皮肤',
     'animation': '动画',
     'viewScale': '预览缩放',
@@ -33,7 +34,7 @@ module.exports = {
     'noSkeletonData': '缺少骨骼数据！',
     'dataMismatch': '资源数据不匹配！请检查当前选中的资源！',
     'reset': '重置',
-    // setting panel
+    // setting
     'none': '无',
     'selectKey': '快捷键',
     'selectKeyTooltip': '选择一个快捷键',

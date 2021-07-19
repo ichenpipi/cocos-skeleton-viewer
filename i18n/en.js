@@ -3,6 +3,11 @@ module.exports = {
     'view': 'View',
     'setting': 'Setting',
     'checkUpdate': 'Check Update',
+    // update
+    'currentLatest': 'Currently the latest version!',
+    'hasNewVersion': 'New version found: ',
+    'releases': 'Releases: https://gitee.com/ifaswind/ccc-skeleton-viewer/releases',
+    'cocosStore': 'Cocos Store: http://store.cocos.com/app/detail/3008',
     // main
     'skeletonAssets': 'Spine Assets',
     'selectAssets': 'Select skeleton assets',
@@ -10,11 +15,7 @@ module.exports = {
     'noSkeleton': 'No skeleton asset selected!',
     'noTexture': 'No texture assets found!',
     'noAtlas': 'No atlas assets found!',
-    'currentLatest': 'Currently the latest version!',
-    'hasNewVersion': 'New version found: ',
-    'releases': 'Releases: https://gitee.com/ifaswind/ccc-skeleton-viewer/releases',
-    'cocosStore': 'Cocos Store: http://store.cocos.com/app/detail/3008',
-    // view panel
+    // view
     'skin': 'Skin',
     'animation': 'Animation',
     'viewScale': 'View Scale',
@@ -33,7 +34,7 @@ module.exports = {
     'noSkeletonData': 'Lack of skeleton data!',
     'dataMismatch': 'Data mismatch! Please check the selection!',
     'reset': 'Reset',
-    // setting panel
+    // setting
     'none': 'None',
     'selectKey': 'Hotkey',
     'selectKeyTooltip': 'Choose a hotkey',

@@ -1,8 +1,9 @@
 const Path = require('path');
 const Fs = require('fs');
+const PackageUtil = require('./eazax/package-util');
 
 /** 包名 */
-const PACKAGE_NAME = require('../package.json').name;
+const PACKAGE_NAME = PackageUtil.name;
 
 /** package.json 的路径 */
 const PACKAGE_PATH = Path.join(__dirname, '../package.json');
@@ -34,7 +35,7 @@ const ConfigManager = {
      * @returns {{ autoCheckUpdate: boolean }}
      */
     get() {
-        const configData = { ...this.defaultConfig };
+        const configData = JSON.parse(JSON.stringify(this.defaultConfig));
         // 配置
         if (Fs.existsSync(CONFIG_PATH)) {
             const localConfig = JSON.parse(Fs.readFileSync(CONFIG_PATH));
@@ -53,7 +54,7 @@ const ConfigManager = {
      * @param {{ autoCheckUpdate: boolean }} config 配置
      */
     set(config) {
-        const configData = { ...this.defaultConfig };
+        const configData = JSON.parse(JSON.stringify(this.defaultConfig));
         // 配置
         configData.autoCheckUpdate = config.autoCheckUpdate;
         Fs.writeFileSync(CONFIG_PATH, JSON.stringify(configData, null, 2));

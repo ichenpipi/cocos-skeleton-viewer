@@ -1,7 +1,7 @@
 const Path = require('path');
 const Fs = require('fs');
-const I18n = require('../../i18n');
-const RendererUtil = require('../../renderer-util');
+const I18n = require('../../eazax/i18n');
+const RendererUtil = require('../../eazax/renderer-util');
 const SpineUtil = require('../../spine-util');
 
 /** 语言 */

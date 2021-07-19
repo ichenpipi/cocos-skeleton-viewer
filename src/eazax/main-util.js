@@ -1,12 +1,13 @@
 const { ipcMain } = require('electron');
+const PackageUtil = require('./package-util');
 
 /** 包名 */
-const PACKAGE_NAME = require('../package.json').name;
+const PACKAGE_NAME = PackageUtil.name;
 
 /**
  * 主进程工具
  * @author ifaswind (陈皮皮)
- * @version 20210703
+ * @version 20210717
  */
 const MainUtil = {
 
@@ -38,12 +39,22 @@ const MainUtil = {
 
     /**
      * 发送事件到指定渲染进程
-     * @param {EventEmitter} sender 渲染进程实例
+     * @param {EventEmitter} eventEmitter 渲染进程事件对象
      * @param {string} event 事件名
      * @param {...any} args 参数
      */
-    send(sender, event, ...args) {
-        sender.send(`${PACKAGE_NAME}:${event}`, ...args);
+    send(eventEmitter, event, ...args) {
+        eventEmitter.send(`${PACKAGE_NAME}:${event}`, ...args);
+    },
+
+    /**
+     * 回复事件给渲染进程
+     * @param {Electron.IpcMainEvent} ipcMainEvent 事件对象
+     * @param {string} event 事件名
+     * @param {...any} args 参数
+     */
+    reply(ipcMainEvent, event, ...args) {
+        ipcMainEvent.reply(`${PACKAGE_NAME}:${event}`, ...args);
     },
 
 };

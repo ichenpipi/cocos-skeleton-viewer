@@ -1,18 +1,16 @@
-const fetch = require('../lib/node-fetch');
-
-/** 本地包信息 */
-const LOCAL_PACKAGE = require('../package.json');
+const fetch = require('../../lib/node-fetch');
+const PackageUtil = require('./package-util');
 
 /** 本地版本 */
-const LOCAL_VERSION = LOCAL_PACKAGE.version;
+const LOCAL_VERSION = PackageUtil.version;
 
-/** 仓库信息 */
-const REPOSITORY = LOCAL_PACKAGE.repository;
+/** 仓库地址 */
+const REPOSITORY_URL = PackageUtil.repositoryUrl;
 
 /**
  * 更新器
  * @author ifaswind (陈皮皮)
- * @version 20210712
+ * @version 20210713
  */
 const Updater = {
 
@@ -20,7 +18,7 @@ const Updater = {
      * 远端地址
      * @type {string}
      */
-    remote: REPOSITORY.url,
+    remote: REPOSITORY_URL,
 
     /**
      * 分支

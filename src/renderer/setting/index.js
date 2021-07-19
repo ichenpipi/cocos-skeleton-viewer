@@ -1,7 +1,7 @@
-const { getUrlParam } = require('../../utils/browser-util');
-const I18n = require('../../i18n');
+const { getUrlParam } = require('../../eazax/browser-util');
+const I18n = require('../../eazax/i18n');
+const RendererUtil = require('../../eazax/renderer-util');
 const ConfigManager = require('../../config-manager');
-const RendererUtil = require('../../renderer-util');
 
 /** 语言 */
 const LANG = getUrlParam('lang');
