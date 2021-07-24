@@ -622,6 +622,7 @@ const App = {
         debugRenderer.drawMeshHull = this.drawMeshTriangles;
         debugRenderer.drawMeshTriangles = this.drawMeshTriangles;
         debugRenderer.drawPaths = this.drawPaths;
+        debugRenderer.drawSkeletonXY = this.drawBones;
         // 开始渲染
         shapeRenderer.begin(debugShader);
         // 渲染
