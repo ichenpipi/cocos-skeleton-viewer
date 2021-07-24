@@ -74,10 +74,10 @@ const App = {
   methods: {
 
     /**
-     * i18n
+     * 翻译
      * @param {string} key 
      */
-    i18n(key) {
+    t(key) {
       return translate(key);
     },
 

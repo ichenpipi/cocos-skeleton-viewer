@@ -62,6 +62,10 @@ const App = {
         atlas: null,
         png: null,
       },
+      // 拖动
+      isDragging: false,
+      clickOffset: [0, 0],
+      dragOffset: [0, 0],
     };
   },
 
@@ -142,6 +146,13 @@ const App = {
       return `💀 [Skeleton]\n· ${skeletonPath}\n\n🖼 [Texture]\n· ${texturePath}\n\n🗺 [Atlas]\n· ${atlasPath}`;
     },
 
+    /**
+     * 偏移
+     */
+    offset() {
+      return `(${this.dragOffset[0]}, ${-this.dragOffset[1]})`;
+    },
+
   },
 
   /**
@@ -168,10 +179,11 @@ const App = {
     },
 
     /**
-     * 当前动画
+     * 时间缩放
      * @param {number} value 
      */
     timeScale(value) {
+      value = parseFloat(value) || 0;
       this.setTimeScale(value);
     },
 
@@ -192,10 +204,10 @@ const App = {
   methods: {
 
     /**
-     * i18n
+     * 翻译
      * @param {string} key 
      */
-    i18n(key) {
+    t(key) {
       return translate(key);
     },
 
@@ -212,6 +224,15 @@ const App = {
      */
     onResetBtnClick() {
       this.reset();
+    },
+
+    /**
+     * 复位按钮点击回调
+     */
+    onRepositionBtnClick() {
+      this.isDragging = false;
+      this.clickOffset = [0, 0];
+      this.dragOffset = [0, 0];
     },
 
     /**
@@ -258,6 +279,10 @@ const App = {
       this.lastFrameTime = null;
       // 资源信息
       this.assets = null;
+      // 拖动
+      this.isDragging = false;
+      this.clickOffset = [0, 0];
+      this.dragOffset = [0, 0];
     },
 
     /**
@@ -412,12 +437,12 @@ const App = {
           return;
         }
         // 设置皮肤
-        if (this.skins[0]) {
+        if (this.skins && this.skins[0]) {
           // this.skeletonData.defaultSkin.name
           this.setSkin(this.skins[0]);
         }
         // 播放动画
-        if (this.animations[0]) {
+        if (this.animations && this.animations[0]) {
           this.playAnimation(this.animations[0]);
         }
         // 记录当前帧时间
@@ -614,14 +639,13 @@ const App = {
      * 更新视口尺寸
      */
     resizeView() {
-      // 画布尺寸
+      // 更新画布尺寸
       const canvas = this.canvas,
         { clientWidth, clientHeight } = canvas;
       if (canvas.width !== clientWidth || canvas.height !== clientHeight) {
         canvas.width = clientWidth;
         canvas.height = clientHeight;
       }
-
       // 骨骼位置以及缩放
       const bounds = this.bounds;
       // 计算中心点
@@ -638,8 +662,8 @@ const App = {
       const width = canvas.width * scale,
         height = canvas.height * scale;
       // 更新矩阵
-      const x = centerX - width / 2,
-        y = centerY - height / 2;
+      const x = (centerX - (width / 2)) - (this.dragOffset[0] * scale),
+        y = (centerY - (height / 2)) + (this.dragOffset[1] * scale);
       this.mvp.ortho2d(x, y, width, height);
       // 更新视口
       this.gl.viewport(0, 0, canvas.width, canvas.height);
@@ -728,14 +752,10 @@ const App = {
     },
 
     /**
-     * 鼠标滚轮事件回调
+     * 画布鼠标滚轮事件回调
      * @param {WheelEvent} event 
      */
-    onMouseWheel(event) {
-      // 仅在画布上生效
-      if (event.path[0] !== this.canvas) {
-        return;
-      }
+    onCanvasMouseWheel(event) {
       // 当前缩放
       let scale = this.viewScale;
       // 缩放步长
@@ -754,6 +774,48 @@ const App = {
       this.viewScale = scale;
     },
 
+    /**
+     * 画布鼠标点击事件回调
+     * @param {MouseEvent} event 
+     */
+    onCanvasMouseDown(event) {
+      this.isDragging = true;
+      const x = event.offsetX - this.dragOffset[0],
+        y = event.offsetY - this.dragOffset[1];
+      this.clickOffset = [x, y];
+    },
+
+    /**
+     * 画布鼠标移动事件回调
+     * @param {MouseEvent} event 
+     */
+    onCanvasMouseMove(event) {
+      if (!this.isDragging) {
+        return;
+      }
+      const x = event.offsetX - this.clickOffset[0],
+        y = event.offsetY - this.clickOffset[1];
+      this.dragOffset = [x, y];
+    },
+
+    /**
+     * 画布鼠标松开事件回调
+     * @param {MouseEvent} event 
+     */
+    onCanvasMouseUp(event) {
+      this.isDragging = false;
+      this.clickOffset = [0, 0];
+    },
+
+    /**
+     * 画布鼠标离开事件回调
+     * @param {MouseEvent} event 
+     */
+    onCanvasMouseLeave(event) {
+      this.isDragging = false;
+      this.clickOffset = [0, 0];
+    },
+
   },
 
   /**
@@ -763,8 +825,17 @@ const App = {
     console.log('mounted', this);
     // 触发窗口尺寸适配逻辑
     this.onWindowResize();
-    // 监听鼠标滚轮变化
-    window.addEventListener('mousewheel', this.onMouseWheel.bind(this));
+    // 监听画布鼠标滚轮
+    const canvas = this.$refs.canvas;
+    canvas.addEventListener('mousewheel', this.onCanvasMouseWheel.bind(this));
+    // 监听画布鼠标点击
+    canvas.addEventListener('mousedown', this.onCanvasMouseDown.bind(this));
+    // 监听画布鼠标移动
+    canvas.addEventListener('mousemove', this.onCanvasMouseMove.bind(this));
+    // 监听画布鼠标松开
+    canvas.addEventListener('mouseup', this.onCanvasMouseUp.bind(this));
+    // 监听画布鼠标离开
+    canvas.addEventListener('mouseleave', this.onCanvasMouseLeave.bind(this));
     // （主进程）监听资源选择事件
     RendererUtil.on('assets-selected', this.onAssetsSelectedEvent.bind(this));
     // 下一帧

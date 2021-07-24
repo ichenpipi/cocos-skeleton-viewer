@@ -34,6 +34,7 @@ module.exports = {
     'noSkeletonData': '缺少骨骼数据！',
     'dataMismatch': '资源数据不匹配！请检查当前选中的资源！',
     'reset': '重置',
+    'reposition': '复位',
     // setting
     'none': '无',
     'selectKey': '快捷键',

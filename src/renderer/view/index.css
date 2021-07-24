@@ -64,12 +64,6 @@
   left: 4px;
   display: flex;
   flex-direction: row;
-  cursor: pointer;
-}
-
-/* 信息:虚指 */
-.info:hover {
-  color: #09f;
 }
 
 /* 按钮容器 > 子元素 */
@@ -86,6 +80,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 /* 信息,按钮:虚指 */
@@ -104,6 +99,36 @@
 .button .icon {
   width: 13px;
   height: 13px;
+}
+
+/* 位置 */
+.position {
+  height: 13px;
+  opacity: 0.5;
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  display: flex;
+  flex-direction: row;
+}
+
+/* 位置 文本 */
+.position .label {
+  margin-right: 2px;
+  line-height: 12px;
+  font-size: 11px;
+}
+
+/* 位置 按钮 */
+.position .button {
+  width: 13px;
+  height: 13px;
+}
+
+/* 位置 按钮 图标 */
+.position .button .icon {
+  width: 12px;
+  height: 12px;
 }
 
 [v-cloak] {

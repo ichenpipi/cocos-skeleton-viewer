@@ -34,6 +34,7 @@ module.exports = {
     'noSkeletonData': 'Lack of skeleton data!',
     'dataMismatch': 'Data mismatch! Please check the selection!',
     'reset': 'Reset',
+    'reposition': 'Reposition',
     // setting
     'none': 'None',
     'selectKey': 'Hotkey',

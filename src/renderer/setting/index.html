@@ -15,14 +15,14 @@
 <body>
     <div id="app" v-cloak>
         <!-- 标题 -->
-        <div class="title">{{ i18n('setting') }}</div>
+        <div class="title">{{ t('setting') }}</div>
         <!-- 配置 -->
         <div class="properties">
             <!-- 选择快捷键 -->
             <div class="property">
                 <div class="label">
-                    <span class="text">{{ i18n('selectKey') }}</span>
-                    <span class="tooltip">{{ i18n('selectKeyTooltip') }}</span>
+                    <span class="text">{{ t('selectKey') }}</span>
+                    <span class="tooltip">{{ t('selectKeyTooltip') }}</span>
                 </div>
                 <div class="content">
                     <select v-model="selectKey">
@@ -33,18 +33,18 @@
             <!-- 自定义快捷键 -->
             <div class="property">
                 <div class="label">
-                    <span class="text">{{ i18n('customKey') }}</span>
-                    <span class="tooltip">{{ i18n('customKeyTooltip') }}</span>
+                    <span class="text">{{ t('customKey') }}</span>
+                    <span class="tooltip">{{ t('customKeyTooltip') }}</span>
                 </div>
                 <div class="content">
-                    <input v-model="customKey" :placeholder="i18n('customKeyPlaceholder')" />
+                    <input v-model="customKey" :placeholder="t('customKeyPlaceholder')" />
                 </div>
             </div>
             <!-- 自动检查更新 -->
             <div class="property">
                 <div class="label">
-                    <span class="text">{{ i18n('autoCheck') }}</span>
-                    <span class="tooltip">{{ i18n('autoCheckTooltip') }}</span>
+                    <span class="text">{{ t('autoCheck') }}</span>
+                    <span class="tooltip">{{ t('autoCheckTooltip') }}</span>
                 </div>
                 <div class="content">
                     <input type="checkbox" v-model="autoCheckUpdate" />
@@ -52,17 +52,17 @@
             </div>
             <!-- 快捷键参考 -->
             <div class="tip">
-                <span>{{ i18n('reference') }}</span>
-                <a href="https://www.electronjs.org/docs/api/accelerator" target="_blank">{{ i18n('accelerator') }}</a>
+                <span>{{ t('reference') }}</span>
+                <a href="https://www.electronjs.org/docs/api/accelerator" target="_blank">{{ t('accelerator') }}</a>
             </div>
             <!-- Git 仓库 -->
             <div class="tip">
-                <span>{{ i18n('repository') }}</span>
+                <span>{{ t('repository') }}</span>
                 <a href="https://gitee.com/ifaswind/ccc-skeleton-viewer" target="_blank">ccc-skeleton-viewer</a>
             </div>
             <div class="line"></div>
             <!-- 应用按钮 -->
-            <button class="apply-btn" @click="onApplyBtnClick">{{ i18n('apply') }}</button>
+            <button class="apply-btn" @click="onApplyBtnClick">{{ t('apply') }}</button>
         </div>
     </div>
 </body>
