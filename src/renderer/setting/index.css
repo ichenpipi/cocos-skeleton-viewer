@@ -19,6 +19,11 @@ body {
   margin: 15px 0;
 }
 
+/* 属性容器 */
+.properties {
+  overflow: visible;
+}
+
 /* 应用按钮 */
 .apply-btn {
   min-width: 20px;

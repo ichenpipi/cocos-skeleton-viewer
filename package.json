@@ -1,6 +1,6 @@
 {
   "name": "ccc-skeleton-viewer",
-  "version": "1.0.2.20210709",
+  "version": "1.1.0.20210725",
   "description": "用于快速预览骨骼动画，提供独立窗口，也可以附着在编辑器中...",
   "author": {
     "name": "ifaswind（陈皮皮）",
