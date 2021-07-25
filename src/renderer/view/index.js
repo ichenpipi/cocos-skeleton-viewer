@@ -207,9 +207,16 @@ const App = {
     canvasColor(value) {
       // 更新画布颜色
       this.canvas.style.backgroundColor = value;
-      // 更新清除颜色
+      // 获取 RGB 格式
       const { r, g, b } = hexToRGB(value);
+      // 保存颜色值
       this.clearColor = [r / 255, g / 255, b / 255];
+      // 更新 gl 颜色
+      const gl = this.gl;
+      if (gl) {
+        gl.clearColor(r / 255, g / 255, b / 255, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+      }
     },
 
   },
@@ -273,15 +280,9 @@ const App = {
       this.skeleton = null;
       this.bounds = null;
       this.animationState = null;
-      // 清空画布
-      const gl = this.gl;
-      if (gl) {
-        gl.clearColor(...this.clearColor, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-      }
+      // 恢复默认画布颜色
+      this.canvasColor = '#4c4c4c';
       // 环境
-      // this.canvas = null;
-      // this.gl = null;
       this.shader = null;
       this.batcher = null;
       this.mvp = null;
@@ -372,6 +373,8 @@ const App = {
           RendererUtil.print('warn', translate('noWebGL'));
           return;
         }
+        const color = this.clearColor;
+        gl.clearColor(color[0], color[1], color[2], 1);
       }
 
       // Shader
@@ -591,7 +594,6 @@ const App = {
 
       // 清空画布
       const gl = this.gl;
-      gl.clearColor(...this.clearColor, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       // 应用动画并根据时间差值更新动画时间
