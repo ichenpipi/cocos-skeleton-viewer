@@ -2,6 +2,7 @@ const Path = require('path');
 const Fs = require('fs');
 const I18n = require('../../eazax/i18n');
 const RendererUtil = require('../../eazax/renderer-util');
+const { hexToRGB } = require('../../eazax/color-util');
 const SpineUtil = require('../../spine-util');
 
 /** 语言 */
@@ -35,6 +36,9 @@ const App = {
       drawPaths: false,
       // 当前运行时版本
       version: 'unknown',
+      // 画布颜色
+      canvasColor: '#4c4c4c',
+      clearColor: [0.3, 0.3, 0.3],
       // 环境
       canvas: null,
       gl: null,
@@ -196,6 +200,18 @@ const App = {
       this.playAnimation(this.animation);
     },
 
+    /**
+     * 画布颜色
+     * @param {string} value 
+     */
+    canvasColor(value) {
+      // 更新画布颜色
+      this.canvas.style.backgroundColor = value;
+      // 更新清除颜色
+      const { r, g, b } = hexToRGB(value);
+      this.clearColor = [r / 255, g / 255, b / 255];
+    },
+
   },
 
   /**
@@ -260,7 +276,7 @@ const App = {
       // 清空画布
       const gl = this.gl;
       if (gl) {
-        gl.clearColor(0.3, 0.3, 0.3, 1);
+        gl.clearColor(...this.clearColor, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
       }
       // 环境
@@ -575,7 +591,7 @@ const App = {
 
       // 清空画布
       const gl = this.gl;
-      gl.clearColor(0.3, 0.3, 0.3, 1);
+      gl.clearColor(...this.clearColor, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       // 应用动画并根据时间差值更新动画时间
@@ -827,7 +843,7 @@ const App = {
     // 触发窗口尺寸适配逻辑
     this.onWindowResize();
     // 监听画布鼠标滚轮
-    const canvas = this.$refs.canvas;
+    const canvas = this.canvas = this.$refs.canvas;
     canvas.addEventListener('mousewheel', this.onCanvasMouseWheel.bind(this));
     // 监听画布鼠标点击
     canvas.addEventListener('mousedown', this.onCanvasMouseDown.bind(this));

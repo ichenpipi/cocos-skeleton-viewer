@@ -1,6 +1,6 @@
 /* 
   Cocos Creator 风格标签 (橙黑)
-  版本: 20210713
+  版本: 20210725
   作者: ifaswind (陈皮皮)
   主页: https://gitee.com/ifaswind
   公众号: 菜鸟小栈
@@ -31,7 +31,7 @@ select:hover {
   border-color: #888888;
 }
 
-/* 输入框|文本区域 */
+/* 输入框,文本区域 */
 input,
 textarea {
   background-color: #262626;
@@ -50,7 +50,7 @@ textarea {
   resize: vertical;
 }
 
-/* 输入框|文本区域::占位符 */
+/* 输入框,文本区域::占位符 */
 input::placeholder,
 textarea::placeholder {
   font-size: 12px;
@@ -154,6 +154,26 @@ input[type='range']::-webkit-slider-thumb:active,
   color: #bdbdbd;
   border-color: #fd942b !important;
   cursor: ew-resize;
+}
+
+/* 取色器 */
+input[type='color'] {
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border-radius: 1px;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* 取色器::色板容器 */
+input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+/* 取色器::色板 */
+input[type='color']::-webkit-color-swatch {
+  border: none;
 }
 
 /* 超链接 */

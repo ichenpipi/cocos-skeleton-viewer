@@ -13,10 +13,6 @@
             <div class="view">
                 <!-- 画布 -->
                 <canvas ref="canvas" class="canvas"></canvas>
-                <!-- 运行时版本 -->
-                <div class="version">
-                    <span>{{ t('spineRuntime') }}: {{ version }}</span>
-                </div>
                 <!-- 按钮容器 -->
                 <div class="buttons">
                     <!-- 资源信息 -->
@@ -44,6 +40,15 @@
                         </svg>
                     </div>
                 </div>
+                <!-- 运行时版本 -->
+                <div class="version">
+                    <span :title="t('spineRuntime') + ': ' + version">{{ t('spineRuntime') }}: {{ version }}</span>
+                </div>
+                <!-- 颜色 -->
+                <div class="color">
+                    <!-- 取色器 -->
+                    <input type="color" v-model="canvasColor" :title="t('canvasColor')" />
+                </div>
                 <!-- 位置 -->
                 <div class="position">
                     <!-- 文本 -->
@@ -64,7 +69,6 @@
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('viewScale') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <input type="number" step="0.1" v-model="viewScale" />
@@ -74,7 +78,6 @@
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('skin') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <select v-model="skin">
@@ -86,7 +89,6 @@
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('animation') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <select v-model="animation">
@@ -98,7 +100,6 @@
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('loop') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <input type="checkbox" v-model="loop" />
@@ -108,7 +109,6 @@
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('premultipliedAlpha') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <input type="checkbox" v-model="premultipliedAlpha" />
@@ -118,37 +118,33 @@
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('timeScale') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <input type="number" step="0.1" v-model="timeScale" />
                     </div>
                 </div>
-                <!-- 展示骨骼 -->
+                <!-- 绘制骨骼 -->
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('drawBones') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <input type="checkbox" v-model="drawBones" />
                     </div>
                 </div>
-                <!-- 展示包围盒 -->
+                <!-- 绘制包围盒 -->
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('drawBoundingBoxes') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <input type="checkbox" v-model="drawBoundingBoxes" />
                     </div>
                 </div>
-                <!-- 展示三角形 -->
+                <!-- 绘制网格三角形 -->
                 <div class="property">
                     <div class="label">
                         <span class="text">{{ t('drawMeshTriangles') }}</span>
-                        <span class="tooltip">{{ }}</span>
                     </div>
                     <div class="content">
                         <input type="checkbox" v-model="drawMeshTriangles" />

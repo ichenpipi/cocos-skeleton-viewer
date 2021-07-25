@@ -131,6 +131,23 @@
   height: 12px;
 }
 
+/* 颜色 */
+.color {
+  height: 14px;
+  opacity: 1;
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  display: flex;
+  flex-direction: row;
+}
+
+/* 颜色 子元素 */
+.color * {
+  width: 14px !important;
+  height: 14px !important;
+}
+
 [v-cloak] {
   display: none;
 }

@@ -35,6 +35,7 @@ module.exports = {
     'dataMismatch': 'Data mismatch! Please check the selection!',
     'reset': 'Reset',
     'reposition': 'Reposition',
+    'canvasColor': 'Canvas Color',
     // setting
     'none': 'None',
     'selectKey': 'Hotkey',

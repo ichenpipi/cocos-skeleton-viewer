@@ -36,40 +36,41 @@ const PanelManager = {
             this.closeSettingPanel();
             return;
         }
+        // 窗口高度和位置（macOS 标题栏高 28px）
+        const winSize = [500, 340],
+            winPos = calcWindowPosition(winSize, 'center');
         // 创建窗口
-        const winSize = [500, 355],
-            winPos = calcWindowPosition(winSize, 'center'),
-            win = this.settingPanel = new BrowserWindow({
-                width: winSize[0],
-                height: winSize[1],
-                minWidth: winSize[0],
-                minHeight: winSize[1],
-                x: winPos[0],
-                y: winPos[1] - 100,
-                frame: true,
-                title: `${EXTENSION_NAME} | Cocos Creator`,
-                autoHideMenuBar: true,
-                resizable: true,
-                minimizable: false,
-                maximizable: false,
-                fullscreenable: false,
-                skipTaskbar: false,
-                alwaysOnTop: true,
-                hasShadow: true,
-                show: false,
-                webPreferences: {
-                    nodeIntegration: true,
-                },
-            });
+        const win = this.settingPanel = new BrowserWindow({
+            width: winSize[0],
+            height: winSize[1],
+            minWidth: winSize[0],
+            minHeight: winSize[1],
+            x: winPos[0],
+            y: winPos[1] - 100,
+            frame: true,
+            title: `${EXTENSION_NAME} | Cocos Creator`,
+            autoHideMenuBar: true,
+            resizable: true,
+            minimizable: false,
+            maximizable: false,
+            fullscreenable: false,
+            skipTaskbar: false,
+            alwaysOnTop: true,
+            hasShadow: true,
+            show: false,
+            webPreferences: {
+                nodeIntegration: true,
+            },
+        });
         // 加载页面（并传递当前语言）
         win.loadURL(`file://${__dirname}/renderer/setting/index.html?lang=${language}`);
         // 监听按键（ESC 关闭）
         win.webContents.on('before-input-event', (event, input) => {
             if (input.key === 'Escape') this.closeSettingPanel();
         });
-        // 就绪后展示（避免闪烁）
+        // 就绪后（展示，避免闪烁）
         win.on('ready-to-show', () => win.show());
-        // 失焦后（自动关闭）
+        // 失焦后（关闭窗口）
         win.on('blur', () => this.closeSettingPanel());
         // 关闭后（移除引用）
         win.on('closed', () => (this.settingPanel = null));

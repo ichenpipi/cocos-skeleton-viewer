@@ -21,7 +21,7 @@ module.exports = {
     'viewScale': '预览缩放',
     'loop': '循环',
     'premultipliedAlpha': '预乘',
-    'timeScale': '时间缩放率',
+    'timeScale': '时间缩放',
     'drawBones': '绘制骨骼',
     'drawBoundingBoxes': '绘制包围盒',
     'drawMeshTriangles': '绘制网格三角形',
@@ -35,6 +35,7 @@ module.exports = {
     'dataMismatch': '资源数据不匹配！请检查当前选中的资源！',
     'reset': '重置',
     'reposition': '复位',
+    'canvasColor': '画布颜色',
     // setting
     'none': '无',
     'selectKey': '快捷键',
