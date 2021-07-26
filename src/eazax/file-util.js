@@ -3,9 +3,9 @@ const Path = require('path');
 const { promisify } = require('util');
 
 /**
- * 文件工具 (Promise)
+ * 文件工具 (Promise 化)
  * @author ifaswind (陈皮皮)
- * @version 20210711
+ * @version 20210726
  */
 const FileUtil = {
 
@@ -17,11 +17,27 @@ const FileUtil = {
     stat: promisify(Fs.stat),
 
     /**
+     * 创建文件夹
+     * @param {Fs.PathLike} path 路径
+     * @param {Fs.MakeDirectoryOptions?} options 选项
+     * @returns {Promise<void>}
+     */
+    mkdir: promisify(Fs.mkdir),
+
+    /**
      * 读取文件夹
      * @param {Fs.PathLike} path 路径
      * @returns {Promise<string[]>}
      */
     readdir: promisify(Fs.readdir),
+
+    /**
+     * 移除文件夹
+     * @param {Fs.PathLike} path 路径
+     * @param {Fs.RmDirOptions?} options 选项
+     * @returns {Promise<void>}
+     */
+    rmdir: promisify(Fs.rmdir),
 
     /**
      * 读取文件
@@ -31,13 +47,26 @@ const FileUtil = {
     readFile: promisify(Fs.readFile),
 
     /**
-     * 写入文件
+     * 创建文件
      * @param {Fs.PathLike} path 路径
      * @param {string | NodeJS.ArrayBufferView} data 数据
      * @param {Fs.WriteFileOptions?} options 选项
      * @returns {Promise<void>}
      */
     writeFile: promisify(Fs.writeFile),
+
+    /**
+     * 移除文件
+     * @param {Fs.PathLike} path 路径
+     * @returns {Promise<void>}
+     */
+    unlink: promisify(Fs.unlink),
+
+    /**
+     * 测试路径是否存在
+     * @param {Fs.PathLike} path 路径
+     */
+    existsSync: Fs.existsSync,
 
     /**
      * 复制文件/文件夹
@@ -51,7 +80,7 @@ const FileUtil = {
         const stats = await FileUtil.stat(srcPath);
         if (stats.isDirectory()) {
             if (!Fs.existsSync(destPath)) {
-                Fs.mkdirSync(destPath);
+                await FileUtil.mkdir(destPath);
             }
             const names = await FileUtil.readdir(srcPath);
             for (const name of names) {
@@ -63,10 +92,10 @@ const FileUtil = {
     },
 
     /**
-     * 删除文件/文件夹
+     * 移除文件/文件夹 (递归)
      * @param {Fs.PathLike} path 路径
      */
-    async delete(path) {
+    async remove(path) {
         if (!Fs.existsSync(path)) {
             return;
         }
@@ -74,11 +103,11 @@ const FileUtil = {
         if (stats.isDirectory()) {
             const names = await FileUtil.readdir(path);
             for (const name of names) {
-                FileUtil.delete(Path.join(path, name));
+                FileUtil.remove(Path.join(path, name));
             }
-            Fs.rmdirSync(path);
+            await FileUtil.rmdir(path);
         } else if (stats.isFile()) {
-            Fs.unlinkSync(path);
+            await FileUtil.unlink(path);
         }
     },
 
