@@ -25,9 +25,11 @@ const ConfigManager = {
     /**
      * 默认配置
      */
-    defaultConfig: {
-        version: "1.0",
-        autoCheckUpdate: true,
+    get defaultConfig() {
+        return {
+            version: "1.0",
+            autoCheckUpdate: true,
+        };
     },
 
     /**
@@ -35,7 +37,7 @@ const ConfigManager = {
      * @returns {{ autoCheckUpdate: boolean }}
      */
     get() {
-        const configData = JSON.parse(JSON.stringify(this.defaultConfig));
+        const configData = ConfigManager.defaultConfig;
         // 配置
         if (Fs.existsSync(CONFIG_PATH)) {
             const localConfig = JSON.parse(Fs.readFileSync(CONFIG_PATH));
@@ -54,7 +56,7 @@ const ConfigManager = {
      * @param {{ autoCheckUpdate: boolean }} config 配置
      */
     set(config) {
-        const configData = JSON.parse(JSON.stringify(this.defaultConfig));
+        const configData = ConfigManager.defaultConfig;
         // 配置
         configData.autoCheckUpdate = config.autoCheckUpdate;
         Fs.writeFileSync(CONFIG_PATH, JSON.stringify(configData, null, 2));

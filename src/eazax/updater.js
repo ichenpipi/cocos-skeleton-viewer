@@ -31,7 +31,7 @@ const Updater = {
      * @returns {Promise<object>}
      */
     async getRemotePackageJson() {
-        const packageJsonUrl = `${this.remote}/raw/${this.branch}/package.json`;
+        const packageJsonUrl = `${Updater.remote}/raw/${Updater.branch}/package.json`;
         // 发起网络请求
         const response = await fetch(packageJsonUrl, {
             method: 'GET',
@@ -52,7 +52,7 @@ const Updater = {
      * @returns {Promise<string>}
      */
     async getRemoteVersion() {
-        const package = await this.getRemotePackageJson();
+        const package = await Updater.getRemotePackageJson();
         if (!package) {
             return null;
         }
@@ -95,8 +95,8 @@ const Updater = {
      * compareVersion('1.2.0.1', '1.2.0');  // 1
      */
     compareVersion(a, b) {
-        const acs = this.splitVersionString(a),
-            bcs = this.splitVersionString(b);
+        const acs = Updater.splitVersionString(a),
+            bcs = Updater.splitVersionString(b);
         const count = Math.max(acs.length, bcs.length);
         for (let i = 0; i < count; i++) {
             const ac = acs[i],
@@ -119,14 +119,14 @@ const Updater = {
      */
     async check() {
         // 远端版本号
-        const remoteVersion = await this.getRemoteVersion();
+        const remoteVersion = await Updater.getRemoteVersion();
         if (!remoteVersion) {
             return false;
         }
         // 本地版本号
-        const localVersion = this.getLocalVersion();
+        const localVersion = Updater.getLocalVersion();
         // 对比版本号
-        const result = this.compareVersion(localVersion, remoteVersion);
+        const result = Updater.compareVersion(localVersion, remoteVersion);
         return (result < 0);
     },
 

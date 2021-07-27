@@ -32,15 +32,16 @@ const PanelManager = {
      */
     openSettingPanel() {
         // 已打开则关闭
-        if (this.settingPanel) {
-            this.closeSettingPanel();
+        if (PanelManager.settingPanel) {
+            // PanelManager.settingPanel.focus();
+            PanelManager.closeSettingPanel();
             return;
         }
         // 窗口高度和位置（macOS 标题栏高 28px）
         const winSize = [500, 340],
             winPos = calcWindowPosition(winSize, 'center');
         // 创建窗口
-        const win = this.settingPanel = new BrowserWindow({
+        const win = PanelManager.settingPanel = new BrowserWindow({
             width: winSize[0],
             height: winSize[1],
             minWidth: winSize[0],
@@ -66,14 +67,14 @@ const PanelManager = {
         win.loadURL(`file://${__dirname}/renderer/setting/index.html?lang=${language}`);
         // 监听按键（ESC 关闭）
         win.webContents.on('before-input-event', (event, input) => {
-            if (input.key === 'Escape') this.closeSettingPanel();
+            if (input.key === 'Escape') PanelManager.closeSettingPanel();
         });
         // 就绪后（展示，避免闪烁）
         win.on('ready-to-show', () => win.show());
         // 失焦后（关闭窗口）
-        win.on('blur', () => this.closeSettingPanel());
+        win.on('blur', () => PanelManager.closeSettingPanel());
         // 关闭后（移除引用）
-        win.on('closed', () => (this.settingPanel = null));
+        win.on('closed', () => (PanelManager.settingPanel = null));
         // 调试用的 devtools（detach 模式需要取消失焦自动关闭）
         // win.webContents.openDevTools({ mode: 'detach' });
     },
@@ -82,15 +83,15 @@ const PanelManager = {
      * 关闭面板
      */
     closeSettingPanel() {
-        if (!this.settingPanel) {
+        if (!PanelManager.settingPanel) {
             return;
         }
         // 先隐藏再关闭
-        this.settingPanel.hide();
+        PanelManager.settingPanel.hide();
         // 关闭
-        this.settingPanel.close();
+        PanelManager.settingPanel.close();
         // 移除引用
-        this.settingPanel = null;
+        PanelManager.settingPanel = null;
     },
 
 };
