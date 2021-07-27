@@ -27,6 +27,7 @@ const FileUtil = {
     /**
      * 读取文件夹
      * @param {Fs.PathLike} path 路径
+     * @param {any} options 选项
      * @returns {Promise<string[]>}
      */
     readdir: promisify(Fs.readdir),
@@ -42,6 +43,7 @@ const FileUtil = {
     /**
      * 读取文件
      * @param {Fs.PathLike} path 路径
+     * @param {any} options 选项
      * @returns {Promise<Buffer>}
      */
     readFile: promisify(Fs.readFile),
@@ -65,6 +67,13 @@ const FileUtil = {
     /**
      * 测试路径是否存在
      * @param {Fs.PathLike} path 路径
+     * @returns {Promise<boolean>}
+     */
+    exists: promisify(Fs.exists),
+
+    /**
+     * 测试路径是否存在 (同步)
+     * @param {Fs.PathLike} path 路径
      */
     existsSync: Fs.existsSync,
 
@@ -74,12 +83,12 @@ const FileUtil = {
      * @param {Fs.PathLike} destPath 目标路径
      */
     async copy(srcPath, destPath) {
-        if (!Fs.existsSync(srcPath)) {
+        if (!(await FileUtil.exists(srcPath))) {
             return;
         }
         const stats = await FileUtil.stat(srcPath);
         if (stats.isDirectory()) {
-            if (!Fs.existsSync(destPath)) {
+            if (!(await FileUtil.exists(destPath))) {
                 await FileUtil.mkdir(destPath);
             }
             const names = await FileUtil.readdir(srcPath);
@@ -96,7 +105,7 @@ const FileUtil = {
      * @param {Fs.PathLike} path 路径
      */
     async remove(path) {
-        if (!Fs.existsSync(path)) {
+        if (!(await FileUtil.exists(path))) {
             return;
         }
         const stats = await FileUtil.stat(path);
@@ -117,7 +126,7 @@ const FileUtil = {
      * @param {(filePath: Fs.PathLike, stat: Fs.Stats) => void} handler 处理函数
      */
     async map(path, handler) {
-        if (!Fs.existsSync(path)) {
+        if (!(await FileUtil.exists(path))) {
             return;
         }
         const stats = await FileUtil.stat(path);

@@ -83,7 +83,7 @@ async function onSelectEvent(event) {
   }
   // 识别选择的文件路径（兼容不同版本的 Electron）
   const paths = result.filePaths || result;
-  identifyDialogSelection(paths);
+  identifyLocalFiles(paths);
 }
 
 /**
@@ -150,15 +150,14 @@ function identifyEditorSelection(uuids) {
 
 /**
  * 识别选择的文件路径
- * @param {string[]} selection 
- * @returns 
+ * @param {string[]} files 
  */
-function identifyDialogSelection(selection) {
+function identifyLocalFiles(files) {
   // 资源路径
   let spinePath, texturePath, atlasPath;
   // 遍历选中的文件路径
-  for (let i = 0; i < selection.length; i++) {
-    const path = selection[i],
+  for (let i = 0; i < files.length; i++) {
+    const path = files[i],
       extname = Path.extname(path);
     switch (extname) {
       case '.json':
