@@ -1,7 +1,8 @@
 const { BrowserWindow } = require('electron');
-const PackageUtil = require('./eazax/package-util');
-const { language, translate } = require('./eazax/editor-util');
-const { calcWindowPosition } = require('./eazax/window-util');
+const { resolve, join } = require('path');
+const PackageUtil = require('../eazax/package-util');
+const { language, translate } = require('../eazax/editor-util');
+const { calcWindowPosition } = require('../eazax/window-util');
 
 /** 包名 */
 const PACKAGE_NAME = PackageUtil.name;
@@ -64,7 +65,8 @@ const PanelManager = {
             },
         });
         // 加载页面（并传递当前语言）
-        win.loadURL(`file://${__dirname}/renderer/setting/index.html?lang=${language}`);
+        const path = join(resolve(__dirname, '..'), '/renderer/setting/index.html');
+        win.loadURL(`file://${path}?lang=${language}`);
         // 监听按键（ESC 关闭）
         win.webContents.on('before-input-event', (event, input) => {
             if (input.key === 'Escape') PanelManager.closeSettingPanel();

@@ -1,7 +1,7 @@
 /**
  * Spine 工具
  * @author ifaswind (陈皮皮)
- * @version 20210703
+ * @version 20210728
  */
 const SpineUtil = {
 
@@ -21,8 +21,8 @@ const SpineUtil = {
      * @param {string} version 版本
      */
     getSpine(version) {
-        const cache = this.cache;
-        if (cache[version] === null) {
+        const cache = SpineUtil.cache;
+        if (cache[version] == null) {
             const libPath = `../lib/spine-runtimes/${version}/spine-webgl`;
             cache[version] = require(libPath);
             // 注入版本号

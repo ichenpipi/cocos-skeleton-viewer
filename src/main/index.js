@@ -2,9 +2,9 @@ const { dialog } = require('electron');
 const Fs = require('fs');
 const Path = require('path');
 const PanelManager = require('./panel-manager');
-const ConfigManager = require('./config-manager');
-const MainUtil = require('./eazax/main-util');
-const { print, translate, checkUpdate } = require('./eazax/editor-util');
+const ConfigManager = require('../config-manager');
+const MainUtil = require('../eazax/main-util');
+const { print, translate, checkUpdate } = require('../eazax/editor-util');
 
 /**
  * 生命周期：加载
@@ -281,7 +281,6 @@ module.exports = {
 
   /**
    * 扩展消息
-   * @type {{ [key: string]: Function }}
    */
   messages: {
 

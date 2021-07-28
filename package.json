@@ -15,7 +15,7 @@
     "url": "https://gitee.com/ifaswind/ccc-skeleton-viewer"
   },
   "license": "MIT",
-  "main": "src/main.js",
+  "main": "src/main/index.js",
   "main-menu": {
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.view": {
       "message": "ccc-skeleton-viewer:open-view-panel",
@@ -31,7 +31,7 @@
     }
   },
   "panel.view": {
-    "main": "src/renderer/view/main.js",
+    "main": "src/renderer/view/entry.js",
     "type": "dockable",
     "title": "i18n:ccc-skeleton-viewer.name",
     "width": 500,
