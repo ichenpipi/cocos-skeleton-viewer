@@ -7,53 +7,62 @@ const PACKAGE_NAME = PackageUtil.name;
 /**
  * 渲染进程工具
  * @author ifaswind (陈皮皮)
- * @version 20210713
+ * @version 20210729
  */
 const RendererUtil = {
 
     /**
      * 监听事件（一次性）
-     * @param {string} event 事件名
+     * @param {string} channel 频道
      * @param {Function} callback 回调
      */
-    once(event, callback) {
-        ipcRenderer.once(`${PACKAGE_NAME}:${event}`, callback);
+    once(channel, callback) {
+        ipcRenderer.once(`${PACKAGE_NAME}:${channel}`, callback);
     },
 
     /**
      * 监听事件
-     * @param {string} event 事件名
+     * @param {string} channel 频道
      * @param {Function} callback 回调
      */
-    on(event, callback) {
-        ipcRenderer.on(`${PACKAGE_NAME}:${event}`, callback);
+    on(channel, callback) {
+        ipcRenderer.on(`${PACKAGE_NAME}:${channel}`, callback);
     },
 
     /**
      * 取消事件监听
-     * @param {string} event 事件名
+     * @param {string} channel 频道
+     * @param {Function} callback 回调
      */
-    removeAllListeners(event) {
-        ipcRenderer.removeAllListeners(`${PACKAGE_NAME}:${event}`);
+    removeListener(channel, callback) {
+        ipcRenderer.removeListener(`${PACKAGE_NAME}:${channel}`, callback);
+    },
+
+    /**
+     * 取消事件的所有监听
+     * @param {string} channel 频道
+     */
+    removeAllListeners(channel) {
+        ipcRenderer.removeAllListeners(`${PACKAGE_NAME}:${channel}`);
     },
 
     /**
      * 发送事件到主进程
-     * @param {string} event 事件名
+     * @param {string} channel 频道
      * @param {...any} args 参数
      */
-    send(event, ...args) {
-        ipcRenderer.send(`${PACKAGE_NAME}:${event}`, ...args);
+    send(channel, ...args) {
+        ipcRenderer.send(`${PACKAGE_NAME}:${channel}`, ...args);
     },
 
     /**
      * 发送事件到主进程（同步）
-     * @param {string} event 事件名
+     * @param {string} channel 频道
      * @param {...any} args 参数
      * @returns {Promise<any>}
      */
-    sendSync(event, ...args) {
-        return ipcRenderer.sendSync(`${PACKAGE_NAME}:${event}`, ...args);
+    sendSync(channel, ...args) {
+        return ipcRenderer.sendSync(`${PACKAGE_NAME}:${channel}`, ...args);
     },
 
     /**
@@ -66,14 +75,11 @@ const RendererUtil = {
 
     /**
      * 打印信息到 Creator 编辑器控制台
-     * @param {'log' | 'info' | 'warn' | 'error' | string} type 类型 | 内容
-     * @param {string} content 内容
+     * @param {'log' | 'info' | 'warn' | 'error' | string} type 类型 | 参数
+     * @param {any[]?} args 参数
      */
-    print(type, content = undefined) {
-        RendererUtil.send('print', {
-            type,
-            content,
-        });
+    print(type, ...args) {
+        RendererUtil.send('print', type, ...args);
     },
 
 };

@@ -1,7 +1,7 @@
 /**
  * 浏览器工具
  * @author ifaswind (陈皮皮)
- * @version 20210621
+ * @version 20210729
  */
 const BrowserUtil = {
 
@@ -26,6 +26,34 @@ const BrowserUtil = {
             }
         }
         return null;
+    },
+
+    /**
+     * 获取 Cookie 值
+     * @param {string} key 键
+     * @returns {string}
+     */
+    getCookie(key) {
+        const regExp = new RegExp(`(^| )${key}=([^;]*)(;|$)`),
+            values = document.cookie.match(regExp);
+        if (values !== null) {
+            return values[2];
+        }
+        return null;
+    },
+
+    /**
+     * 设置 Cookie
+     * @param {string} key 键
+     * @param {string | number | boolean} value 值
+     * @param {string} expires 过期时间（GMT）
+     */
+    setCookie(key, value, expires) {
+        let keyValues = `${key}=${encodeURIComponent(value)};`;
+        if (expires) {
+            keyValues += `expires=${expires};`;
+        }
+        document.cookie = keyValues;
     },
 
 };

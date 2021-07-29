@@ -45,11 +45,11 @@ function onCheckUpdateEvent(event, logWhatever) {
 /**
  * （渲染进程）打印事件回调
  * @param {Electron.IpcMainEvent} event 
- * @param {{ type: string, content: string }} options 选项
+ * @param {'log' | 'info' | 'warn' | 'error' | string} type 类型 | 内容
+ * @param {any[]?} args 参数
  */
-function onPrintEvent(event, options) {
-  const { type, content } = options;
-  print(type, content);
+function onPrintEvent(event, type, ...args) {
+  print(type, ...args);
 }
 
 /**
