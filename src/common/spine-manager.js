@@ -1,9 +1,7 @@
 /**
- * Spine 工具
- * @author ifaswind (陈皮皮)
- * @version 20210728
+ * Spine 运行时管理器
  */
-const SpineUtil = {
+const SpineManager = {
 
     /**
      * 缓存
@@ -21,9 +19,9 @@ const SpineUtil = {
      * @param {string} version 版本
      */
     getSpine(version) {
-        const cache = SpineUtil.cache;
+        const cache = SpineManager.cache;
         if (cache[version] == null) {
-            const libPath = `../lib/spine-runtimes/${version}/spine-webgl`;
+            const libPath = `../../lib/spine-runtimes/${version}/spine-webgl`;
             cache[version] = require(libPath);
             // 注入版本号
             cache[version].version = version;
@@ -33,4 +31,4 @@ const SpineUtil = {
 
 };
 
-module.exports = SpineUtil;
+module.exports = SpineManager;

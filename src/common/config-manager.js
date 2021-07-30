@@ -1,12 +1,12 @@
 const Path = require('path');
 const Fs = require('fs');
-const PackageUtil = require('./eazax/package-util');
+const PackageUtil = require('../eazax/package-util');
 
 /** 包名 */
 const PACKAGE_NAME = PackageUtil.name;
 
 /** package.json 的路径 */
-const PACKAGE_PATH = Path.join(__dirname, '../package.json');
+const PACKAGE_PATH = Path.join(__dirname, '../../package.json');
 
 /** 快捷键行为 */
 const ACTION_NAME = 'view';
@@ -15,7 +15,7 @@ const ACTION_NAME = 'view';
 const MENU_ITEM_KEY = `i18n:MAIN_MENU.package.title/i18n:${PACKAGE_NAME}.name/i18n:${PACKAGE_NAME}.${ACTION_NAME}`;
 
 /** 配置文件路径 */
-const CONFIG_PATH = Path.join(__dirname, '../config.json');
+const CONFIG_PATH = Path.join(__dirname, '../../config.json');
 
 /**
  * 配置管理器

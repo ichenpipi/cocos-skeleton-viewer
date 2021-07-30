@@ -2,7 +2,7 @@ const { dialog } = require('electron');
 const Fs = require('fs');
 const Path = require('path');
 const PanelManager = require('./panel-manager');
-const ConfigManager = require('../config-manager');
+const ConfigManager = require('../common/config-manager');
 const MainUtil = require('../eazax/main-util');
 const { print, translate, checkUpdate } = require('../eazax/editor-util');
 
