@@ -1,7 +1,9 @@
+const { shell } = require('electron');
 const { getUrlParam } = require('../../eazax/browser-util');
 const I18n = require('../../eazax/i18n');
 const RendererUtil = require('../../eazax/renderer-util');
 const ConfigManager = require('../../common/config-manager');
+const PackageUtil = require('../../eazax/package-util');
 
 /** 语言 */
 const LANG = getUrlParam('lang');
@@ -40,6 +42,10 @@ const App = {
       customKey: '',
       // 自动检查更新
       autoCheckUpdate: false,
+      // 仓库地址
+      repositoryUrl: PackageUtil.repositoryUrl,
+      // 包名
+      packageName: PackageUtil.name,
     };
   },
 
@@ -162,7 +168,7 @@ const App = {
       link.addEventListener('click', (event) => {
         event.preventDefault();
         const url = link.getAttribute('href');
-        RendererUtil.openExternal(url);
+        shell.openExternal(url);
       });
     });
     // （主进程）检查更新

@@ -15,8 +15,8 @@
                 <canvas ref="canvas" class="canvas"></canvas>
                 <!-- 按钮容器 -->
                 <div class="buttons">
-                    <!-- 资源信息 -->
-                    <div class="info" :title="assetsInfo">
+                    <!-- 资源信息按钮 -->
+                    <div class="button" :title="assetsInfo" @click="onInfoBtnClick">
                         <svg class="icon" viewBox="0 0 30 30">
                             <path fill="currentColor"
                                 d="M4.395 25.605c-2.825-2.731-4.579-6.556-4.579-10.789 0-8.284 6.716-15 15-15 4.234 0 8.058 1.754 10.785 4.575l0.004 0.004c2.605 2.695 4.211 6.37 4.211 10.421 0 8.284-6.716 15-15 15-4.050 0-7.726-1.605-10.425-4.215l0.004 0.004zM13.5 16.5v6h3v-9h-3v3zM13.5 7.5v3h3v-3h-3z">

@@ -36,7 +36,7 @@ const EditorUtil = {
 
     /**
      * 打印信息到控制台
-     * @param {'log' | 'info' | 'warn' | 'error' | string} type 类型 | 内容
+     * @param {'log' | 'info' | 'warn' | 'error' | any} type
      * @param {any[]?} args 
      */
     print(type, ...args) {

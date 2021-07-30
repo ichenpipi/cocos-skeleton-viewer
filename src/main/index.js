@@ -45,8 +45,8 @@ function onCheckUpdateEvent(event, logWhatever) {
 /**
  * （渲染进程）打印事件回调
  * @param {Electron.IpcMainEvent} event 
- * @param {'log' | 'info' | 'warn' | 'error' | string} type 类型 | 内容
- * @param {any[]?} args 参数
+ * @param {'log' | 'info' | 'warn' | 'error' | any} type 
+ * @param {any[]?} args 
  */
 function onPrintEvent(event, type, ...args) {
   print(type, ...args);

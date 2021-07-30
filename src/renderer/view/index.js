@@ -1,3 +1,4 @@
+const { shell } = require('electron');
 const Path = require('path');
 const Fs = require('fs');
 const I18n = require('../../eazax/i18n');
@@ -232,6 +233,19 @@ const App = {
      */
     t(key) {
       return translate(key);
+    },
+
+    /**
+     * 资源信息按钮点击回调
+     */
+    onInfoBtnClick() {
+      if (!this.assets || !this.assets.dir) {
+        return;
+      }
+      const { dir, json, skel } = this.assets,
+        spinePath = Path.join(dir, (json || skel));
+      // 在资源管理器中展示 spine 文件
+      shell.showItemInFolder(spinePath)
     },
 
     /**
@@ -723,21 +737,21 @@ const App = {
       // 但是 loadTextureAtlas 内部调用 loadTexture 时传递的 path 是文件名而不是完整路径
       // 如果没有指定 pathPrefix 属性，loadTexture 就会无法正常加载
       // 所以干脆都改为需要指定 pathPrefix 属性
-      const assets = this.assets;
-      if (!assets.dir) {
-        assets.dir = Path.dirname(assets.json || assets.skel);
+      const assets = this.assets,
+        { dir, json, skel, png, atlas } = assets;
+      if (!dir) {
+        assets.dir = Path.dirname(json || skel);
       }
       if (!assets.dir.endsWith(Path.sep)) {
         assets.dir += Path.sep;
       }
-      if (assets.json) {
-        assets.json = Path.basename(assets.json);
+      if (json) {
+        assets.json = Path.basename(json);
+      } else if (skel) {
+        assets.skel = Path.basename(skel);
       }
-      if (assets.skel) {
-        assets.skel = Path.basename(assets.skel);
-      }
-      assets.atlas = Path.basename(assets.atlas);
-      assets.png = Path.basename(assets.png);
+      assets.atlas = Path.basename(atlas);
+      assets.png = Path.basename(png);
       console.log('[methods]', 'processAssetPaths', this.assets);
     },
 

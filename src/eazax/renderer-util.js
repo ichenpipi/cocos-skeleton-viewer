@@ -1,4 +1,4 @@
-const { ipcRenderer, shell } = require('electron');
+const { ipcRenderer } = require('electron');
 const PackageUtil = require('./package-util');
 
 /** 包名 */
@@ -7,7 +7,7 @@ const PACKAGE_NAME = PackageUtil.name;
 /**
  * 渲染进程工具
  * @author ifaswind (陈皮皮)
- * @version 20210729
+ * @version 20210730
  */
 const RendererUtil = {
 
@@ -66,17 +66,9 @@ const RendererUtil = {
     },
 
     /**
-     * 在用户的默认浏览器中打开 URL 
-     * @param {string} url 
-     */
-    openExternal(url) {
-        shell.openExternal(url);
-    },
-
-    /**
      * 打印信息到 Creator 编辑器控制台
-     * @param {'log' | 'info' | 'warn' | 'error' | string} type 类型 | 参数
-     * @param {any[]?} args 参数
+     * @param {'log' | 'info' | 'warn' | 'error' | any} type 
+     * @param {any[]?} args 
      */
     print(type, ...args) {
         RendererUtil.send('print', type, ...args);
