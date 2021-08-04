@@ -4,21 +4,23 @@ const PackageUtil = require('./package-util');
 /** 本地版本 */
 const LOCAL_VERSION = PackageUtil.version;
 
-/** 仓库地址 */
-const REPOSITORY_URL = PackageUtil.repositoryUrl;
+/** 远程仓库地址 */
+const REPOSITORY_URL = PackageUtil.repositoryUrl.replace('.git', '');
 
 /**
  * 更新器
  * @author ifaswind (陈皮皮)
- * @version 20210713
+ * @version 20210804
  */
 const Updater = {
 
     /**
-     * 远端地址
+     * 远程仓库地址
      * @type {string}
      */
-    remote: REPOSITORY_URL,
+    get remote() {
+        return REPOSITORY_URL;
+    },
 
     /**
      * 分支

@@ -10,9 +10,10 @@
     "git-home": "https://gitee.com/ifaswind",
     "official-account": "公众号「菜鸟小栈」"
   },
+  "homepage": "https://gitee.com/ifaswind/ccc-skeleton-viewer",
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/ifaswind/ccc-skeleton-viewer"
+    "url": "https://gitee.com/ifaswind/ccc-skeleton-viewer.git"
   },
   "license": "MIT",
   "main": "src/main/index.js",
