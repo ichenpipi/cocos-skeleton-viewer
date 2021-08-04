@@ -4,7 +4,7 @@ const PACKAGE_JSON = require('../../package.json');
 /**
  * 包工具
  * @author ifaswind (陈皮皮)
- * @version 20210713
+ * @version 20210804
  */
 const PackageUtil = {
 
@@ -28,8 +28,8 @@ const PackageUtil = {
      * 仓库地址
      * @type {string}
      */
-    get repositoryUrl() {
-        return PACKAGE_JSON.repository.url;
+    get repository() {
+        return PACKAGE_JSON.repository;
     },
 
 };

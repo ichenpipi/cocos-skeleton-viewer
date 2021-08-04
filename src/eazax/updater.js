@@ -5,7 +5,7 @@ const PackageUtil = require('./package-util');
 const LOCAL_VERSION = PackageUtil.version;
 
 /** 远程仓库地址 */
-const REPOSITORY_URL = PackageUtil.repositoryUrl.replace('.git', '');
+const REMOTE_URL = PackageUtil.repository;
 
 /**
  * 更新器
@@ -19,7 +19,7 @@ const Updater = {
      * @type {string}
      */
     get remote() {
-        return REPOSITORY_URL;
+        return REMOTE_URL;
     },
 
     /**

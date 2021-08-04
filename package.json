@@ -11,10 +11,7 @@
     "official-account": "公众号「菜鸟小栈」"
   },
   "homepage": "https://gitee.com/ifaswind/ccc-skeleton-viewer",
-  "repository": {
-    "type": "git",
-    "url": "https://gitee.com/ifaswind/ccc-skeleton-viewer.git"
-  },
+  "repository": "https://gitee.com/ifaswind/ccc-skeleton-viewer",
   "license": "MIT",
   "main": "src/main/index.js",
   "main-menu": {
