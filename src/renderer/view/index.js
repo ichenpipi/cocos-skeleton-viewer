@@ -860,17 +860,17 @@ const App = {
         this.onWindowResize();
         // 监听画布鼠标滚轮
         const canvas = this.canvas = this.$refs.canvas;
-        canvas.addEventListener('mousewheel', this.onCanvasMouseWheel.bind(this));
+        canvas.addEventListener('mousewheel', this.onCanvasMouseWheel);
         // 监听画布鼠标点击
-        canvas.addEventListener('mousedown', this.onCanvasMouseDown.bind(this));
+        canvas.addEventListener('mousedown', this.onCanvasMouseDown);
         // 监听画布鼠标移动
-        canvas.addEventListener('mousemove', this.onCanvasMouseMove.bind(this));
+        canvas.addEventListener('mousemove', this.onCanvasMouseMove);
         // 监听画布鼠标松开
-        canvas.addEventListener('mouseup', this.onCanvasMouseUp.bind(this));
+        canvas.addEventListener('mouseup', this.onCanvasMouseUp);
         // 监听画布鼠标离开
-        canvas.addEventListener('mouseleave', this.onCanvasMouseLeave.bind(this));
+        canvas.addEventListener('mouseleave', this.onCanvasMouseLeave);
         // （主进程）监听资源选择事件
-        RendererUtil.on('assets-selected', this.onAssetsSelectedEvent.bind(this));
+        RendererUtil.on('assets-selected', this.onAssetsSelectedEvent);
         // 下一帧
         this.$nextTick(() => {
             // （主进程）已就绪

@@ -148,6 +148,53 @@
   height: 14px !important;
 }
 
-[v-cloak] {
-  display: none;
+/* CSS @media 在 Shadow DOM 中无法得到期望结果 */
+
+/* .layout {
+  flex-direction: column;
 }
+
+.properties {
+  width: 100%;
+  margin-top: 5px;
+  margin-left: 0;
+  display: flex;
+} */
+
+/* @media screen and (min-width: 800px) {
+  @media screen and (min-width: 350px) {
+    .layout {
+      flex-direction: row;
+    }
+    .properties {
+      width: 265px;
+      margin-top: 0;
+      margin-left: 5px;
+      display: flex;
+    }
+  }
+  @media screen and (max-width: 349px) {
+    .properties {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-height: 360px) {
+  @media screen and (min-width: 350px) {
+    .layout {
+      flex-direction: row;
+    }
+    .properties {
+      width: 265px;
+      margin-top: 0;
+      margin-left: 5px;
+      display: flex;
+    }
+  }
+  @media screen and (max-width: 349px) {
+    .properties {
+      display: none;
+    }
+  }
+} */
