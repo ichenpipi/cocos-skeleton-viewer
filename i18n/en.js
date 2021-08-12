@@ -1,7 +1,7 @@
 module.exports = {
     'name': 'Skeleton Viewer',
     'view': 'View',
-    'setting': 'Setting',
+    'settings': 'Settings',
     'checkUpdate': 'Check Update',
     // update
     'currentLatest': 'Currently the latest version!',
@@ -36,7 +36,7 @@ module.exports = {
     'reset': 'Reset',
     'reposition': 'Reposition',
     'canvasColor': 'Canvas Color',
-    // setting
+    // settings
     'none': 'None',
     'selectKey': 'Hotkey',
     'selectKeyTooltip': 'Choose a hotkey',

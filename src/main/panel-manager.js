@@ -1,5 +1,5 @@
 const { BrowserWindow } = require('electron');
-const { resolve, join } = require('path');
+const { join } = require('path');
 const PackageUtil = require('../eazax/package-util');
 const { language, translate } = require('../eazax/editor-util');
 const { calcWindowPosition } = require('../eazax/window-util');
@@ -23,26 +23,25 @@ const PanelManager = {
     },
 
     /**
-     * 面板实例
+     * 设置面板实例
      * @type {BrowserWindow}
      */
-    settingPanel: null,
+    settings: null,
 
     /**
-     * 打开面板
+     * 打开设置面板
      */
-    openSettingPanel() {
+    openSettingsPanel() {
         // 已打开则关闭
-        if (PanelManager.settingPanel) {
-            // PanelManager.settingPanel.focus();
-            PanelManager.closeSettingPanel();
+        if (PanelManager.settings) {
+            PanelManager.closeSettingsPanel();
             return;
         }
         // 窗口高度和位置（macOS 标题栏高 28px）
         const winSize = [500, 340],
             winPos = calcWindowPosition(winSize, 'center');
         // 创建窗口
-        const win = PanelManager.settingPanel = new BrowserWindow({
+        const win = PanelManager.settings = new BrowserWindow({
             width: winSize[0],
             height: winSize[1],
             minWidth: winSize[0],
@@ -64,36 +63,33 @@ const PanelManager = {
                 nodeIntegration: true,
             },
         });
-        // 加载页面（并传递当前语言）
-        const path = join(resolve(__dirname, '..'), '/renderer/setting/index.html');
-        win.loadURL(`file://${path}?lang=${language}`);
         // 监听按键（ESC 关闭）
         win.webContents.on('before-input-event', (event, input) => {
-            if (input.key === 'Escape') PanelManager.closeSettingPanel();
+            if (input.key === 'Escape') PanelManager.closeSettingsPanel();
         });
         // 就绪后（展示，避免闪烁）
         win.on('ready-to-show', () => win.show());
         // 失焦后（关闭窗口）
-        win.on('blur', () => PanelManager.closeSettingPanel());
+        win.on('blur', () => PanelManager.closeSettingsPanel());
         // 关闭后（移除引用）
-        win.on('closed', () => (PanelManager.settingPanel = null));
+        win.on('closed', () => (PanelManager.settings = null));
+        // 加载页面（并传递当前语言）
+        const path = join(__dirname, '../renderer/settings/index.html');
+        win.loadURL(`file://${path}?lang=${language}`);
         // 调试用的 devtools（detach 模式需要取消失焦自动关闭）
         // win.webContents.openDevTools({ mode: 'detach' });
     },
 
     /**
-     * 关闭面板
+     * 关闭设置面板
      */
-    closeSettingPanel() {
-        if (!PanelManager.settingPanel) {
+    closeSettingsPanel() {
+        if (!PanelManager.settings) {
             return;
         }
-        // 先隐藏再关闭
-        PanelManager.settingPanel.hide();
-        // 关闭
-        PanelManager.settingPanel.close();
-        // 移除引用
-        PanelManager.settingPanel = null;
+        PanelManager.settings.hide();
+        PanelManager.settings.close();
+        PanelManager.settings = null;
     },
 
 };

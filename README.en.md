@@ -90,9 +90,9 @@ Click on *Extension -> Skeleton Viewer -> View* option to open the view panel.
 
 
 
-### Setting
+### Settings
 
-Click on *Extension -> Skeleton Viewer -> Setting* option to open the setting panel.
+Click on *Extension -> Skeleton Viewer -> Settings* option to open the setting panel.
 
 In the setting panel, you can choose a hotkey(shortcut, for opening the view panel quickly) in preset list, or customize one by yourself.
 

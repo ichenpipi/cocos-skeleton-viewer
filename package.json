@@ -19,8 +19,8 @@
       "message": "ccc-skeleton-viewer:open-view-panel",
       "icon": "/images/view.png"
     },
-    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.setting": {
-      "message": "ccc-skeleton-viewer:open-setting-panel",
+    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.settings": {
+      "message": "ccc-skeleton-viewer:open-settings-panel",
       "icon": "/images/setting.png"
     },
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.checkUpdate": {

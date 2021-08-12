@@ -1,7 +1,7 @@
 module.exports = {
     'name': '骨骼查看器',
     'view': '预览',
-    'setting': '设置',
+    'settings': '设置',
     'checkUpdate': '检查更新',
     // update
     'currentLatest': '当前已是最新版本！',
@@ -36,7 +36,7 @@ module.exports = {
     'reset': '重置',
     'reposition': '复位',
     'canvasColor': '画布颜色',
-    // setting
+    // settings
     'none': '无',
     'selectKey': '快捷键',
     'selectKeyTooltip': '选择一个快捷键',

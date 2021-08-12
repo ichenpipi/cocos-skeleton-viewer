@@ -292,8 +292,8 @@ module.exports = {
         /**
          * 打开设置面板
          */
-        'open-setting-panel'() {
-            PanelManager.openSettingPanel();
+        'open-settings-panel'() {
+            PanelManager.openSettingsPanel();
         },
 
         /**

@@ -1,22 +1,15 @@
 const { shell } = require('electron');
 const { getUrlParam } = require('../../eazax/browser-util');
-const I18n = require('../../eazax/i18n');
+const { translate } = require('../../eazax/i18n');
 const RendererUtil = require('../../eazax/renderer-util');
 const ConfigManager = require('../../common/config-manager');
 const PackageUtil = require('../../eazax/package-util');
 
-/** 语言 */
+/** 当前语言 */
 const LANG = getUrlParam('lang');
 
-/**
- * i18n
- * @param {string} key
- * @returns {string}
- */
-const translate = (key) => I18n.translate(LANG, key);
-
 // 导入 Vue 工具函数
-const { ref, reactive, watch, onMounted, onBeforeUnmount } = Vue;
+const { ref, watch, onMounted, onBeforeUnmount } = Vue;
 
 // 构建 Vue 应用
 const App = {
@@ -27,12 +20,11 @@ const App = {
      * @param {*} context 
      */
     setup(props, context) {
-        console.log('setup', props, context);
 
         // 预设快捷键
-        const presets = reactive([
-            { key: '', name: translate('none') },
-            { key: 'custom', name: translate('customKey') },
+        const presets = ref([
+            { key: '', name: t('none') },
+            { key: 'custom', name: t('customKey') },
             { key: 'F1', name: 'F1' },
             { key: 'F3', name: 'F3' },
             { key: 'F4', name: 'F4' },
@@ -67,23 +59,6 @@ const App = {
                 selectKey.value = 'custom';
             }
         });
-
-        /**
-         * 翻译
-         * @param {string} key 
-         */
-        function t(key) {
-            return translate(key);
-        }
-
-        /**
-         * 应用按钮点击回调
-         * @param {*} event 
-         */
-        function onApplyBtnClick(event) {
-            // 保存配置
-            setConfig();
-        }
 
         /**
          * 获取配置
@@ -142,6 +117,23 @@ const App = {
         }
 
         /**
+         * 应用按钮点击回调
+         * @param {*} event 
+         */
+        function onApplyBtnClick(event) {
+            // 保存配置
+            setConfig();
+        }
+
+        /**
+         * 翻译
+         * @param {string} key 
+         */
+        function t(key) {
+            return translate(LANG, key);
+        }
+
+        /**
          * 生命周期：挂载后
          */
         onMounted(() => {
@@ -174,9 +166,10 @@ const App = {
             autoCheckUpdate,
             repositoryUrl,
             packageName,
-            t,
             onApplyBtnClick,
+            t,
         };
+
     },
 
 };
