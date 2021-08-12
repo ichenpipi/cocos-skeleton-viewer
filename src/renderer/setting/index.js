@@ -157,9 +157,10 @@ const App = {
     },
 
     /**
-     * 生命周期：实例被挂载
+     * 生命周期：挂载后
      */
     mounted() {
+        console.log('mounted', this);
         // 获取配置
         this.getConfig();
         // 覆盖 a 标签点击回调（使用默认浏览器打开网页）
@@ -176,9 +177,9 @@ const App = {
     },
 
     /**
-     * 生命周期：实例销毁前
+     * 生命周期：卸载前
      */
-    beforeDestroy() {
+    beforeUnmount() {
 
     },
 

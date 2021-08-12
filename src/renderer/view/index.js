@@ -16,6 +16,26 @@ const LANG = Editor.lang;
  */
 const translate = (key) => I18n.translate(LANG, key);
 
+// 环境
+let canvas = null,
+    gl = null,
+    shader = null,
+    batcher = null,
+    mvp = null,
+    skeletonRenderer = null;
+// 调试
+let debugRenderer = null,
+    debugShader = null,
+    shapeRenderer = null;
+// 骨骼数据
+let skeleton = null,
+    bounds = null;
+// 上一帧时间
+let lastFrameTime = null;
+// 拖动
+let isDragging = false,
+    clickOffset = [0, 0];
+
 /** Vue 应用 */
 const App = {
 
@@ -24,6 +44,14 @@ const App = {
      */
     data() {
         return {
+            // 资源信息
+            assets: {
+                dir: null,
+                json: null,
+                skel: null,
+                atlas: null,
+                png: null,
+            },
             // 选项
             viewScale: 1.0,
             skin: '',
@@ -41,35 +69,11 @@ const App = {
             canvasColor: '#4c4c4c',
             clearColor: [0.3, 0.3, 0.3],
             // 环境
-            canvas: null,
-            gl: null,
-            shader: null,
-            batcher: null,
-            mvp: null,
-            skeletonRenderer: null,
             assetManager: null,
-            // 调试
-            debugRenderer: null,
-            debugShader: null,
-            shapeRenderer: null,
             // 骨骼数据
             skeletonData: null,
-            skeleton: null,
-            bounds: null,
             animationState: null,
-            // 上一帧时间
-            lastFrameTime: null,
-            // 资源信息
-            assets: {
-                dir: null,
-                json: null,
-                skel: null,
-                atlas: null,
-                png: null,
-            },
             // 拖动
-            isDragging: false,
-            clickOffset: [0, 0],
             dragOffset: [0, 0],
         };
     },
@@ -207,13 +211,12 @@ const App = {
          */
         canvasColor(value) {
             // 更新画布颜色
-            this.canvas.style.backgroundColor = value;
+            canvas.style.backgroundColor = value;
             // 获取 RGB 格式
             const { r, g, b } = hexToRGB(value);
             // 保存颜色值
             this.clearColor = [r / 255, g / 255, b / 255];
             // 更新 gl 颜色
-            const gl = this.gl;
             if (gl) {
                 gl.clearColor(r / 255, g / 255, b / 255, 1);
                 gl.clear(gl.COLOR_BUFFER_BIT);
@@ -226,6 +229,52 @@ const App = {
      * 实例函数
      */
     methods: {
+
+        /**
+         * 重置
+         */
+        reset() {
+            // 资源信息
+            this.assets = null;
+            // 选项
+            this.viewScale = 1;
+            this.skin = '';
+            this.animation = '';
+            this.timeScale = 1;
+            this.loop = true;
+            this.premultipliedAlpha = false;
+            this.drawBones = false;
+            this.drawBoundingBoxes = false;
+            this.drawMeshTriangles = false;
+            this.drawPaths = false;
+            // 当前运行时版本
+            this.version = 'unknown';
+            // 恢复默认画布颜色
+            this.canvasColor = '#4c4c4c';
+            // 骨骼数据
+            skeleton = null;
+            bounds = null;
+            this.skeletonData = null;
+            this.animationState = null;
+            // 清空画布
+            gl && gl.clear(gl.COLOR_BUFFER_BIT);
+            // 环境
+            shader = null;
+            batcher = null;
+            mvp = null;
+            skeletonRenderer = null;
+            this.assetManager = null;
+            // 调试
+            debugRenderer = null;
+            debugShader = null;
+            shapeRenderer = null;
+            // 上一帧时间
+            lastFrameTime = null;
+            // 拖动
+            isDragging = false;
+            clickOffset = [0, 0];
+            this.dragOffset = [0, 0];
+        },
 
         /**
          * 翻译
@@ -267,52 +316,8 @@ const App = {
          * 复位按钮点击回调
          */
         onRepositionBtnClick() {
-            this.isDragging = false;
-            this.clickOffset = [0, 0];
-            this.dragOffset = [0, 0];
-        },
-
-        /**
-         * 重置
-         */
-        reset() {
-            // 选项
-            this.viewScale = 1;
-            this.skin = '';
-            this.animation = '';
-            this.timeScale = 1;
-            this.loop = true;
-            this.premultipliedAlpha = false;
-            this.drawBones = false;
-            this.drawBoundingBoxes = false;
-            this.drawMeshTriangles = false;
-            this.drawPaths = false;
-            // 当前运行时版本
-            this.version = 'unknown';
-            // 骨骼数据
-            this.skeletonData = null;
-            this.skeleton = null;
-            this.bounds = null;
-            this.animationState = null;
-            // 恢复默认画布颜色
-            this.canvasColor = '#4c4c4c';
-            // 环境
-            this.shader = null;
-            this.batcher = null;
-            this.mvp = null;
-            this.skeletonRenderer = null;
-            this.assetManager = null;
-            // 调试
-            this.debugRenderer = null;
-            this.debugShader = null;
-            this.shapeRenderer = null;
-            // 上一帧时间
-            this.lastFrameTime = null;
-            // 资源信息
-            this.assets = null;
-            // 拖动
-            this.isDragging = false;
-            this.clickOffset = [0, 0];
+            isDragging = false;
+            clickOffset = [0, 0];
             this.dragOffset = [0, 0];
         },
 
@@ -374,15 +379,13 @@ const App = {
         initRuntime() {
             console.log('[methods]', 'initRuntime');
             // 获取画布
-            let canvas = this.canvas;
             if (!canvas) {
-                canvas = this.canvas = this.$refs.canvas;
+                canvas = this.$refs.canvas;
             }
             // WebGL
-            let gl = this.gl;
             if (!gl) {
                 const config = { alpha: false };
-                gl = this.gl = canvas.getContext("webgl", config);
+                gl = canvas.getContext("webgl", config);
                 if (!gl) {
                     RendererUtil.print('warn', translate('noWebGL'));
                     return;
@@ -392,19 +395,19 @@ const App = {
             }
 
             // Shader
-            this.shader = spine.webgl.Shader.newTwoColoredTextured(gl);
+            shader = spine.webgl.Shader.newTwoColoredTextured(gl);
             // 处理器
-            this.batcher = new spine.webgl.PolygonBatcher(gl);
+            batcher = new spine.webgl.PolygonBatcher(gl);
             // MVP 变换矩阵
-            this.mvp = new spine.webgl.Matrix4();
-            this.mvp.ortho2d(0, 0, canvas.width - 1, canvas.height - 1);
+            mvp = new spine.webgl.Matrix4();
+            mvp.ortho2d(0, 0, canvas.width - 1, canvas.height - 1);
             // 骨骼渲染器
-            this.skeletonRenderer = new spine.webgl.SkeletonRenderer(gl);
+            skeletonRenderer = new spine.webgl.SkeletonRenderer(gl);
 
             // 用于调试的 debugRenderer、debugShader 和 shapeRenderer
-            this.debugRenderer = new spine.webgl.SkeletonDebugRenderer(gl);
-            this.debugShader = spine.webgl.Shader.newColored(gl);
-            this.shapeRenderer = new spine.webgl.ShapeRenderer(gl);
+            debugRenderer = new spine.webgl.SkeletonDebugRenderer(gl);
+            debugShader = spine.webgl.Shader.newColored(gl);
+            shapeRenderer = new spine.webgl.ShapeRenderer(gl);
 
             // 资源管理器
             this.assetManager = new spine.webgl.AssetManager(gl);
@@ -415,11 +418,11 @@ const App = {
          */
         loadAssets() {
             console.log('[methods]', 'loadAssets');
-            if (!this.assetManager) {
+            const assetManager = this.assetManager;
+            if (!assetManager) {
                 return;
             }
-            const assets = this.assets,
-                assetManager = this.assetManager;
+            const assets = this.assets;
             // 指定资源目录前缀
             if (assets.dir) {
                 assetManager.pathPrefix = assets.dir;
@@ -479,7 +482,7 @@ const App = {
                     this.playAnimation(this.animations[0]);
                 }
                 // 记录当前帧时间
-                this.lastFrameTime = Date.now() / 1000;
+                lastFrameTime = Date.now() / 1000;
                 // 下一帧开始渲染
                 requestAnimationFrame(this.render);
             } else {
@@ -522,13 +525,13 @@ const App = {
             }
 
             // 创建骨骼对象
-            this.skeleton = new spine.Skeleton(this.skeletonData);
+            skeleton = new spine.Skeleton(this.skeletonData);
 
             // 计算边界
-            this.bounds = this.calculateBounds();
+            bounds = this.calculateBounds();
 
             // 创建 AnimationState 对象用于动画控制
-            const animationStateData = new spine.AnimationStateData(this.skeleton.data);
+            const animationStateData = new spine.AnimationStateData(skeleton.data);
             this.animationState = new spine.AnimationState(animationStateData);
 
             // Done
@@ -540,14 +543,14 @@ const App = {
          * @param {string} name 
          */
         setSkin(name) {
-            if (!this.skeleton) {
+            if (!skeleton) {
                 return;
             }
             this.skin = name;
             // 设置皮肤
-            this.skeleton.setSkinByName(name);
+            skeleton.setSkinByName(name);
             // 重置姿势
-            this.skeleton.setSlotsToSetupPose();
+            skeleton.setSlotsToSetupPose();
         },
 
         /**
@@ -555,12 +558,12 @@ const App = {
          * @param {string} name 
          */
         playAnimation(name) {
-            if (!this.skeleton) {
+            if (!skeleton) {
                 return;
             }
             this.animation = name;
             // 重置姿势
-            this.skeleton.setToSetupPose();
+            skeleton.setToSetupPose();
             // 播放动画
             this.animationState.setAnimation(0, name, this.loop);
         },
@@ -570,7 +573,7 @@ const App = {
          * @param {number} value 
          */
         setTimeScale(value) {
-            if (!this.skeleton) {
+            if (!skeleton) {
                 return;
             }
             this.animationState.timeScale = value;
@@ -581,7 +584,6 @@ const App = {
          * @returns {{ offset: { x: number, y: number }, size: { x: number, y: number } }}
          */
         calculateBounds() {
-            const skeleton = this.skeleton;
             skeleton.setToSetupPose();
             skeleton.updateWorldTransform();
             const offset = new spine.Vector2(),
@@ -594,39 +596,33 @@ const App = {
          * 渲染骨骼
          */
         render() {
-            if (!this.skeleton) {
+            if (!skeleton) {
                 return;
             }
             // 计算帧时间差
             const now = Date.now() / 1000,
-                delta = now - this.lastFrameTime;
+                delta = now - lastFrameTime;
             // 记录当前帧时间
-            this.lastFrameTime = now;
+            lastFrameTime = now;
 
             // 更新 mvp 来适配画布尺寸
             this.resizeView();
 
             // 清空画布
-            const gl = this.gl;
             gl.clear(gl.COLOR_BUFFER_BIT);
 
             // 应用动画并根据时间差值更新动画时间
-            const animationState = this.animationState,
-                skeleton = this.skeleton;
-            animationState.update(delta);
-            animationState.apply(skeleton);
+            this.animationState.update(delta);
+            this.animationState.apply(skeleton);
             // 更新骨骼 Transform
             skeleton.updateWorldTransform();
 
             // 渲染
-            const shader = this.shader,
-                batcher = this.batcher,
-                skeletonRenderer = this.skeletonRenderer;
             // 绑定 shader
             shader.bind();
             // 传递属性
             shader.setUniformi(spine.webgl.Shader.SAMPLER, 0);
-            shader.setUniform4x4f(spine.webgl.Shader.MVP_MATRIX, this.mvp.values);
+            shader.setUniform4x4f(spine.webgl.Shader.MVP_MATRIX, mvp.values);
             // 渲染骨骼
             batcher.begin(shader);
             // 设置 skeletonRenderer 属性
@@ -639,13 +635,10 @@ const App = {
 
             // 调试
             if (this.debug) {
-                const debugShader = this.debugShader,
-                    debugRenderer = this.debugRenderer,
-                    shapeRenderer = this.shapeRenderer;
                 // 绑定 shader
                 debugShader.bind();
                 // 传递属性
-                debugShader.setUniform4x4f(spine.webgl.Shader.MVP_MATRIX, this.mvp.values);
+                debugShader.setUniform4x4f(spine.webgl.Shader.MVP_MATRIX, mvp.values);
                 // 设置 debugRenderer 属性
                 debugRenderer.premultipliedAlpha = this.premultipliedAlpha;
                 debugRenderer.drawBones = this.drawBones;
@@ -673,33 +666,33 @@ const App = {
          */
         resizeView() {
             // 更新画布尺寸
-            const canvas = this.canvas,
-                { clientWidth, clientHeight } = canvas;
+            const { clientWidth, clientHeight } = canvas;
             if (canvas.width !== clientWidth || canvas.height !== clientHeight) {
                 canvas.width = clientWidth;
                 canvas.height = clientHeight;
             }
             // 骨骼位置以及缩放
-            const bounds = this.bounds;
+            const canvasWidth = canvas.width,
+                canvasHeight = canvas.height;
             // 计算中心点
             const centerX = (bounds.offset.x + (bounds.size.x / 2)) || 0,
                 centerY = (bounds.offset.y + (bounds.size.y / 2)) || 0;
             // 计算缩放比例
-            const ratioX = bounds.size.x / canvas.width,
-                ratioY = bounds.size.y / canvas.height;
+            const ratioX = bounds.size.x / canvasWidth,
+                ratioY = bounds.size.y / canvasHeight;
             let scale = Math.max(ratioX, ratioY) * 1.2;
             if (scale < 1) scale = 1;
             // 自定义缩放
             scale /= this.viewScale;
             // 最终宽高
-            const width = canvas.width * scale,
-                height = canvas.height * scale;
+            const width = canvasWidth * scale,
+                height = canvasHeight * scale;
             // 更新矩阵
             const x = (centerX - (width / 2)) - (this.dragOffset[0] * scale),
                 y = (centerY - (height / 2)) + (this.dragOffset[1] * scale);
-            this.mvp.ortho2d(x, y, width, height);
+            mvp.ortho2d(x, y, width, height);
             // 更新视口
-            this.gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.viewport(0, 0, canvasWidth, canvasHeight);
         },
 
         /**
@@ -716,7 +709,7 @@ const App = {
             // 未选中资源
             if (!assets) return;
             // 储存
-            this.assets = { ...assets };
+            this.assets = assets;
             // 处理路径
             this.processAssetPaths();
             // 获取运行时
@@ -789,6 +782,9 @@ const App = {
          * @param {WheelEvent} event 
          */
         onCanvasMouseWheel(event) {
+            if (!this.assets) {
+                return;
+            }
             // 当前缩放
             let scale = this.viewScale;
             // 缩放步长
@@ -812,10 +808,13 @@ const App = {
          * @param {MouseEvent} event 
          */
         onCanvasMouseDown(event) {
-            this.isDragging = true;
+            if (!this.assets) {
+                return;
+            }
+            isDragging = true;
             const x = event.offsetX - this.dragOffset[0],
                 y = event.offsetY - this.dragOffset[1];
-            this.clickOffset = [x, y];
+            clickOffset = [x, y];
         },
 
         /**
@@ -823,11 +822,11 @@ const App = {
          * @param {MouseEvent} event 
          */
         onCanvasMouseMove(event) {
-            if (!this.isDragging) {
+            if (!isDragging) {
                 return;
             }
-            const x = event.offsetX - this.clickOffset[0],
-                y = event.offsetY - this.clickOffset[1];
+            const x = event.offsetX - clickOffset[0],
+                y = event.offsetY - clickOffset[1];
             this.dragOffset = [x, y];
         },
 
@@ -836,8 +835,8 @@ const App = {
          * @param {MouseEvent} event 
          */
         onCanvasMouseUp(event) {
-            this.isDragging = false;
-            this.clickOffset = [0, 0];
+            isDragging = false;
+            clickOffset = [0, 0];
         },
 
         /**
@@ -845,21 +844,21 @@ const App = {
          * @param {MouseEvent} event 
          */
         onCanvasMouseLeave(event) {
-            this.isDragging = false;
-            this.clickOffset = [0, 0];
+            isDragging = false;
+            clickOffset = [0, 0];
         },
 
     },
 
     /**
-     * 生命周期：实例被挂载
+     * 生命周期：挂载后
      */
     async mounted() {
         console.log('mounted', this);
         // 触发窗口尺寸适配逻辑
         this.onWindowResize();
         // 监听画布鼠标滚轮
-        const canvas = this.canvas = this.$refs.canvas;
+        canvas = this.$refs.canvas;
         canvas.addEventListener('mousewheel', this.onCanvasMouseWheel);
         // 监听画布鼠标点击
         canvas.addEventListener('mousedown', this.onCanvasMouseDown);
@@ -889,9 +888,9 @@ const App = {
     },
 
     /**
-     * 生命周期：实例销毁前
+     * 生命周期：卸载前
      */
-    beforeDestroy() {
+    beforeUnmount() {
         // 取消事件监听
         RendererUtil.removeAllListeners('assets-selected');
     },
