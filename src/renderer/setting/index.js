@@ -15,172 +15,168 @@ const LANG = getUrlParam('lang');
  */
 const translate = (key) => I18n.translate(LANG, key);
 
-// 应用
+// 导入 Vue 工具函数
+const { ref, reactive, watch, onMounted, onBeforeUnmount } = Vue;
+
+// 构建 Vue 应用
 const App = {
 
     /**
-     * 数据
+     * 设置
+     * @param {*} props 
+     * @param {*} context 
      */
-    data() {
-        return {
-            // 预设快捷键
-            presets: [
-                { key: '', name: translate('none') },
-                { key: 'custom', name: translate('customKey') },
-                { key: 'F1', name: 'F1' },
-                { key: 'F3', name: 'F3' },
-                { key: 'F4', name: 'F4' },
-                { key: 'F5', name: 'F5' },
-                { key: 'F6', name: 'F6' },
-                { key: 'CmdOrCtrl+F', name: 'Cmd/Ctrl + F' },
-                { key: 'CmdOrCtrl+B', name: 'Cmd/Ctrl + B' },
-                { key: 'CmdOrCtrl+Shift+F', name: 'Cmd/Ctrl + Shift + F' },
-            ],
-            // 选择
-            selectKey: '',
-            // 自定义
-            customKey: '',
-            // 自动检查更新
-            autoCheckUpdate: false,
-            // 仓库地址
-            repositoryUrl: PackageUtil.repositoryUrl,
-            // 包名
-            packageName: PackageUtil.name,
-        };
-    },
+    setup(props, context) {
+        console.log('setup', props, context);
 
-    /**
-     * 监听器
-     */
-    watch: {
+        // 预设快捷键
+        const presets = reactive([
+            { key: '', name: translate('none') },
+            { key: 'custom', name: translate('customKey') },
+            { key: 'F1', name: 'F1' },
+            { key: 'F3', name: 'F3' },
+            { key: 'F4', name: 'F4' },
+            { key: 'F5', name: 'F5' },
+            { key: 'F6', name: 'F6' },
+            { key: 'CmdOrCtrl+F', name: 'Cmd/Ctrl + F' },
+            { key: 'CmdOrCtrl+B', name: 'Cmd/Ctrl + B' },
+            { key: 'CmdOrCtrl+Shift+F', name: 'Cmd/Ctrl + Shift + F' },
+        ]);
+        // 选择
+        const selectKey = ref('');
+        // 自定义
+        const customKey = ref('');
+        // 自动检查更新
+        const autoCheckUpdate = ref(false);
 
-        /**
-         * 选择快捷键
-         */
-        selectKey(value) {
+        // 仓库地址
+        const repositoryUrl = PackageUtil.repository;
+        // 包名
+        const packageName = PackageUtil.name;
+
+        // 监听选择快捷键
+        watch(selectKey, (value) => {
             if (value !== 'custom') {
-                this.customKey = '';
+                customKey.value = '';
             }
-        },
+        });
 
-        /**
-         * 自定义
-         */
-        customKey(value) {
-            if (value !== '' && this.selectKey !== 'custom') {
-                this.selectKey = 'custom';
+        // 监听自定义
+        watch(customKey, (value) => {
+            if (value !== '' && selectKey.value !== 'custom') {
+                selectKey.value = 'custom';
             }
-        },
-
-    },
-
-    /**
-     * 实例函数
-     */
-    methods: {
+        });
 
         /**
          * 翻译
          * @param {string} key 
          */
-        t(key) {
+        function t(key) {
             return translate(key);
-        },
+        }
 
         /**
          * 应用按钮点击回调
          * @param {*} event 
          */
-        onApplyBtnClick(event) {
+        function onApplyBtnClick(event) {
             // 保存配置
-            this.setConfig();
-        },
+            setConfig();
+        }
 
         /**
          * 获取配置
          */
-        getConfig() {
+        function getConfig() {
             const config = ConfigManager.get();
             if (!config) return;
             // 自动检查更新
-            this.autoCheckUpdate = config.autoCheckUpdate;
+            autoCheckUpdate.value = config.autoCheckUpdate;
             // 快捷键
             const hotkey = config.hotkey;
             if (!hotkey || hotkey === '') {
-                this.selectKey = '';
-                this.customKey = '';
+                selectKey.value = '';
+                customKey.value = '';
                 return;
             }
             // 预设快捷键
-            const presets = this.presets;
             for (let i = 0, l = presets.length; i < l; i++) {
                 if (presets[i].key === hotkey) {
-                    this.selectKey = hotkey;
-                    this.customKey = '';
+                    selectKey.value = hotkey;
+                    customKey.value = '';
                     return;
                 }
             }
             // 自定义快捷键
-            this.selectKey = 'custom';
-            this.customKey = hotkey;
-        },
+            selectKey.value = 'custom';
+            customKey.value = hotkey;
+        }
 
         /**
          * 保存配置
          */
-        setConfig() {
+        function setConfig() {
             const config = {
-                autoCheckUpdate: this.autoCheckUpdate,
+                autoCheckUpdate: autoCheckUpdate.value,
                 hotkey: null,
             };
-            if (this.selectKey === 'custom') {
-                const customKey = this.customKey;
+            if (selectKey.value === 'custom') {
                 // 自定义输入是否有效
-                if (customKey === '') {
+                if (customKey.value === '') {
                     RendererUtil.print('warn', translate('customKeyError'));
                     return;
                 }
                 // 不可以使用双引号（避免 json 值中出现双引号而解析错误，导致插件加载失败）
-                if (customKey.includes('"')) {
-                    this.customKey = this.customKey.replace(/\"/g, '');
+                if (customKey.value.includes('"')) {
+                    customKey.value = customKey.value.replace(/\"/g, '');
                     RendererUtil.print('warn', translate('quoteError'));
                     return;
                 }
-                config.hotkey = customKey;
+                config.hotkey = customKey.value;
             } else {
-                config.hotkey = this.selectKey;
+                config.hotkey = selectKey.value;
             }
             // 保存到本地
             ConfigManager.set(config);
-        },
+        }
 
-    },
-
-    /**
-     * 生命周期：挂载后
-     */
-    mounted() {
-        console.log('mounted', this);
-        // 获取配置
-        this.getConfig();
-        // 覆盖 a 标签点击回调（使用默认浏览器打开网页）
-        const links = document.querySelectorAll('a[href]');
-        links.forEach((link) => {
-            link.addEventListener('click', (event) => {
-                event.preventDefault();
-                const url = link.getAttribute('href');
-                shell.openExternal(url);
+        /**
+         * 生命周期：挂载后
+         */
+        onMounted(() => {
+            // 获取配置
+            getConfig();
+            // 覆盖 a 标签点击回调（使用默认浏览器打开网页）
+            const links = document.querySelectorAll('a[href]');
+            links.forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const url = link.getAttribute('href');
+                    shell.openExternal(url);
+                });
             });
+            // （主进程）检查更新
+            RendererUtil.send('check-update', false);
         });
-        // （主进程）检查更新
-        RendererUtil.send('check-update', false);
-    },
 
-    /**
-     * 生命周期：卸载前
-     */
-    beforeUnmount() {
+        /**
+         * 生命周期：卸载前
+         */
+        onBeforeUnmount(() => {
 
+        });
+
+        return {
+            presets,
+            selectKey,
+            customKey,
+            autoCheckUpdate,
+            repositoryUrl,
+            packageName,
+            t,
+            onApplyBtnClick,
+        };
     },
 
 };

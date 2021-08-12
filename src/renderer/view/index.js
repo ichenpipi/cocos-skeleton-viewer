@@ -36,7 +36,7 @@ let lastFrameTime = null;
 let isDragging = false,
     clickOffset = [0, 0];
 
-/** Vue 应用 */
+// 构建 Vue 应用
 const App = {
 
     /**
