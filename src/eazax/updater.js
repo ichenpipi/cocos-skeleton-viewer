@@ -56,11 +56,10 @@ const Updater = {
      */
     async getRemoteVersion() {
         const package = await Updater.getRemotePackageJson();
-        if (!package) {
-            return null;
+        if (package && package.version) {
+            return package.version;
         }
-        const version = package.version || null;
-        return version;
+        return null;
     },
 
     /**
