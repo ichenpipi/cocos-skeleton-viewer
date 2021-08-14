@@ -1,29 +1,35 @@
 /**
  * 版本工具
  * @author ifaswind (陈皮皮)
- * @version 20210813
+ * @version 20210814
  */
 const VersionUtil = {
 
     /**
      * 拆分版本号
-     * @param {string} version 版本号文本
+     * @param {string | number} version 版本号文本
      * @returns {number[]}
      * @example
      * splitVersionString('1.2.0');  // [1, 2, 0]
      */
     splitVersionString(version) {
-        return (
-            version.replace(/-/g, '.')
-                .split('.')
-                .map(v => (parseInt(v) || 0))
-        );
+        if (typeof version === 'number') {
+            return [version];
+        }
+        if (typeof version === 'string') {
+            return (
+                version.replace(/-/g, '.')
+                    .split('.')
+                    .map(v => (parseInt(v) || 0))
+            );
+        }
+        return [0];
     },
 
     /**
      * 对比版本号
-     * @param {string} a 版本 a
-     * @param {string} b 版本 b
+     * @param {string | number} a 版本 a
+     * @param {string | number} b 版本 b
      * @returns {-1 | 0 | 1}
      * @example
      * compareVersion('1.0.0', '1.0.1');    // -1
