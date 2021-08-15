@@ -7,7 +7,7 @@ const PACKAGE_NAME = PackageUtil.name;
 /**
  * 主进程工具
  * @author ifaswind (陈皮皮)
- * @version 20210729
+ * @version 20210815
  */
 const MainUtil = {
 
@@ -48,12 +48,12 @@ const MainUtil = {
 
     /**
      * 发送事件到指定渲染进程
-     * @param {EventEmitter} eventEmitter 渲染进程事件对象
+     * @param {Electron.WebContents} webContents 渲染进程事件对象
      * @param {string} channel 频道
      * @param {any[]?} args 参数
      */
-    send(eventEmitter, channel, ...args) {
-        eventEmitter.send(`${PACKAGE_NAME}:${channel}`, ...args);
+    send(webContents, channel, ...args) {
+        webContents.send(`${PACKAGE_NAME}:${channel}`, ...args);
     },
 
     /**
