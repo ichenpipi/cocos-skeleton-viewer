@@ -5,11 +5,11 @@ const PackageUtil = require('./package-util');
 const PACKAGE_NAME = PackageUtil.name;
 
 /**
- * 主进程工具
+ * 主进程 IPC 事件
  * @author ifaswind (陈皮皮)
- * @version 20210815
+ * @version 20210818
  */
-const MainUtil = {
+const MainEvent = {
 
     /**
      * 监听事件（一次性）
@@ -17,7 +17,7 @@ const MainUtil = {
      * @param {Function} callback 回调
      */
     once(channel, callback) {
-        ipcMain.once(`${PACKAGE_NAME}:${channel}`, callback);
+        return ipcMain.once(`${PACKAGE_NAME}:${channel}`, callback);
     },
 
     /**
@@ -26,7 +26,7 @@ const MainUtil = {
      * @param {Function} callback 回调
      */
     on(channel, callback) {
-        ipcMain.on(`${PACKAGE_NAME}:${channel}`, callback);
+        return ipcMain.on(`${PACKAGE_NAME}:${channel}`, callback);
     },
 
     /**
@@ -35,7 +35,7 @@ const MainUtil = {
      * @param {Function} callback 回调
      */
     removeListener(channel, callback) {
-        ipcMain.removeListener(`${PACKAGE_NAME}:${channel}`, callback);
+        return ipcMain.removeListener(`${PACKAGE_NAME}:${channel}`, callback);
     },
 
     /**
@@ -43,7 +43,7 @@ const MainUtil = {
      * @param {string} channel 频道
      */
     removeAllListeners(channel) {
-        ipcMain.removeAllListeners(`${PACKAGE_NAME}:${channel}`);
+        return ipcMain.removeAllListeners(`${PACKAGE_NAME}:${channel}`);
     },
 
     /**
@@ -52,8 +52,13 @@ const MainUtil = {
      * @param {string} channel 频道
      * @param {any[]?} args 参数
      */
-    send(webContents, channel, ...args) {
-        webContents.send(`${PACKAGE_NAME}:${channel}`, ...args);
+    send(webContents, channel) {
+        // return webContents.send(`${PACKAGE_NAME}:${channel}`, ...args);
+        const args = [`${PACKAGE_NAME}:${channel}`];
+        for (let i = 2, l = arguments.length; i < l; i++) {
+            args.push(arguments[i]);
+        }
+        return webContents.send.apply(webContents, args);
     },
 
     /**
@@ -62,10 +67,15 @@ const MainUtil = {
      * @param {string} channel 频道
      * @param {any[]?} args 参数
      */
-    reply(ipcMainEvent, channel, ...args) {
-        ipcMainEvent.reply(`${PACKAGE_NAME}:${channel}`, ...args);
+    reply(ipcMainEvent, channel) {
+        // return ipcMainEvent.reply(`${PACKAGE_NAME}:${channel}`, ...args);
+        const args = [`${PACKAGE_NAME}:${channel}`];
+        for (let i = 2, l = arguments.length; i < l; i++) {
+            args.push(arguments[i]);
+        }
+        return ipcMainEvent.reply.apply(ipcMainEvent, args);
     },
 
 };
 
-module.exports = MainUtil;
+module.exports = MainEvent;

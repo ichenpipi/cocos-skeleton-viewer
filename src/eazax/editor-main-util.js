@@ -3,7 +3,7 @@ const PackageUtil = require('./package-util');
 const Updater = require('./updater');
 
 /** 编辑器语言 */
-const LANG = Editor.lang;
+const LANG = Editor.lang || Editor.I18n.getLanguage();
 
 /** 包名 */
 const PACKAGE_NAME = PackageUtil.name;
@@ -12,11 +12,11 @@ const PACKAGE_NAME = PackageUtil.name;
 const EXTENSION_NAME = I18n.translate(LANG, 'name');
 
 /**
- * 编辑器工具 (主进程) (Cocos Creator 2.x)
+ * 编辑器主进程工具 (依赖 Cocos Creator 编辑器)
  * @author ifaswind (陈皮皮)
- * @version 20210726
+ * @version 20210818
  */
-const EditorUtil = {
+const EditorMainUtil = {
 
     /**
      * 语言
@@ -39,27 +39,32 @@ const EditorUtil = {
      * @param {'log' | 'info' | 'warn' | 'error' | any} type
      * @param {any[]?} args 
      */
-    print(type, ...args) {
-        const header = `[${EXTENSION_NAME}]`;
+    print(type) {
+        const args = [`[${EXTENSION_NAME}]`];
+        for (let i = 1, l = arguments.length; i < l; i++) {
+            args.push(arguments[i]);
+        }
+        const object = Editor.log ? Editor : console;
         switch (type) {
             case 'log': {
-                Editor.log(header, ...args);
+                object.log.apply(object, args);
                 break;
             }
             case 'info': {
-                Editor.info(header, ...args);
+                object.info.apply(object, args);
                 break;
             }
             case 'warn': {
-                Editor.warn(header, ...args);
+                object.warn.apply(object, args);
                 break;
             }
             case 'error': {
-                Editor.error(header, ...args);
+                object.error.apply(object, args);
                 break;
             }
             default: {
-                Editor.log(header, type, ...args);
+                args.splice(1, 0, type);
+                object.log.apply(object, args);
             }
         }
     },
@@ -77,7 +82,7 @@ const EditorUtil = {
         // 是否有新版本
         const hasNewVersion = await Updater.check();
         // 打印到控制台
-        const { print, translate } = EditorUtil;
+        const { print, translate } = EditorMainUtil;
         if (hasNewVersion) {
             const remoteVersion = await Updater.getRemoteVersion();
             print('info', `${translate('hasNewVersion')}${remoteVersion}`);
@@ -90,4 +95,4 @@ const EditorUtil = {
 
 };
 
-module.exports = EditorUtil;
+module.exports = EditorMainUtil;

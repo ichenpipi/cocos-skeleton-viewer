@@ -3,17 +3,17 @@ const Fs = require('fs');
 const Path = require('path');
 const PanelManager = require('./panel-manager');
 const ConfigManager = require('../common/config-manager');
-const MainUtil = require('../eazax/main-util');
-const EditorKit = require('../eazax/editor-kit');
-const { print, translate, checkUpdate } = require('../eazax/editor-util');
+const MainEvent = require('../eazax/main-event');
+const EditorMainKit = require('../eazax/editor-main-kit');
+const { print, translate, checkUpdate } = require('../eazax/editor-main-util');
 
 /**
  * 生命周期：加载
  */
 function load() {
-    EditorKit.register();
-    MainUtil.on('ready', onReadyEvent);
-    MainUtil.on('select', onSelectEvent);
+    EditorMainKit.register();
+    MainEvent.on('ready', onReadyEvent);
+    MainEvent.on('select', onSelectEvent);
     // 自动检查更新
     const config = ConfigManager.get();
     if (config.autoCheckUpdate) {
@@ -27,9 +27,9 @@ function load() {
  * 生命周期：卸载
  */
 function unload() {
-    EditorKit.unregister();
-    MainUtil.removeAllListeners('ready');
-    MainUtil.removeAllListeners('select');
+    EditorMainKit.unregister();
+    MainEvent.removeAllListeners('ready');
+    MainEvent.removeAllListeners('select');
 }
 
 /**
@@ -195,6 +195,10 @@ function processPaths(paths) {
         if (!atlasPath) {
             atlasPath = getRelatedFile(spinePath, 'txt');
         }
+        // 还没有的话再试试 atlas.txt 格式
+        if (!atlasPath) {
+            atlasPath = getRelatedFile(spinePath, 'atlas.txt');
+        }
     }
     // 找不到图集啊
     if (!atlasPath) {
@@ -254,7 +258,7 @@ function updateRenderer(assets) {
         renderer = null;
         return;
     }
-    MainUtil.send(renderer, 'assets-selected', assets);
+    MainEvent.send(renderer, 'assets-selected', assets);
 }
 
 module.exports = {

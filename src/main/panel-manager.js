@@ -1,7 +1,7 @@
 const { BrowserWindow } = require('electron');
 const { join } = require('path');
 const PackageUtil = require('../eazax/package-util');
-const { language, translate } = require('../eazax/editor-util');
+const { language, translate } = require('../eazax/editor-main-util');
 const { calcWindowPosition } = require('../eazax/window-util');
 
 /** 包名 */
@@ -32,9 +32,9 @@ const PanelManager = {
      * 打开设置面板
      */
     openSettingsPanel() {
-        // 已打开则关闭
+        // 已打开则直接展示
         if (PanelManager.settings) {
-            PanelManager.closeSettingsPanel();
+            PanelManager.settings.show();
             return;
         }
         // 窗口高度和位置（macOS 标题栏高 28px）
@@ -63,17 +63,15 @@ const PanelManager = {
                 nodeIntegration: true,
             },
         });
-        // 监听按键（ESC 关闭）
+        // 监听按键
         win.webContents.on('before-input-event', (event, input) => {
             if (input.key === 'Escape') PanelManager.closeSettingsPanel();
         });
-        // 就绪后（展示，避免闪烁）
+        // 就绪后展示（避免闪烁）
         win.on('ready-to-show', () => win.show());
-        // 失焦后（关闭窗口）
-        win.on('blur', () => PanelManager.closeSettingsPanel());
-        // 关闭后（移除引用）
+        // 关闭后
         win.on('closed', () => (PanelManager.settings = null));
-        // 加载页面（并传递当前语言）
+        // 加载页面
         const path = join(__dirname, '../renderer/settings/index.html');
         win.loadURL(`file://${path}?lang=${language}`);
         // 调试用的 devtools（detach 模式需要取消失焦自动关闭）

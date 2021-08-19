@@ -5,7 +5,7 @@ const { promisify } = require('util');
 /**
  * 文件工具 (Promise 化)
  * @author ifaswind (陈皮皮)
- * @version 20210726
+ * @version 20210818
  */
 const FileUtil = {
 
@@ -65,13 +65,6 @@ const FileUtil = {
     unlink: promisify(Fs.unlink),
 
     /**
-     * 测试路径是否存在
-     * @param {Fs.PathLike} path 路径
-     * @returns {Promise<boolean>}
-     */
-    exists: promisify(Fs.exists),
-
-    /**
      * 测试路径是否存在 (同步)
      * @param {Fs.PathLike} path 路径
      */
@@ -81,23 +74,43 @@ const FileUtil = {
      * 复制文件/文件夹
      * @param {Fs.PathLike} srcPath 源路径
      * @param {Fs.PathLike} destPath 目标路径
+     * @returns {Promise<boolean>}
      */
     async copy(srcPath, destPath) {
-        if (!(await FileUtil.exists(srcPath))) {
-            return;
+        if (!FileUtil.existsSync(srcPath)) {
+            return false;
         }
         const stats = await FileUtil.stat(srcPath);
         if (stats.isDirectory()) {
-            if (!(await FileUtil.exists(destPath))) {
-                await FileUtil.mkdir(destPath);
+            if (!FileUtil.existsSync(destPath)) {
+                await FileUtil.createDir(destPath);
             }
             const names = await FileUtil.readdir(srcPath);
             for (const name of names) {
-                FileUtil.copy(Path.join(srcPath, name), Path.join(destPath, name));
+                await FileUtil.copy(Path.join(srcPath, name), Path.join(destPath, name));
             }
-        } else if (stats.isFile()) {
+        } else {
             await FileUtil.writeFile(destPath, await FileUtil.readFile(srcPath));
         }
+        return true;
+    },
+
+    /**
+     * 创建文件夹 (递归)
+     * @param {Fs.PathLike} path 路径
+     * @returns {Promise<boolean>}
+     */
+    async createDir(path) {
+        if (FileUtil.existsSync(path)) {
+            return true;
+        } else {
+            const dir = Path.dirname(path);
+            if (await FileUtil.createDir(dir)) {
+                await FileUtil.mkdir(path);
+                return true;
+            }
+        }
+        return false;
     },
 
     /**
@@ -105,17 +118,17 @@ const FileUtil = {
      * @param {Fs.PathLike} path 路径
      */
     async remove(path) {
-        if (!(await FileUtil.exists(path))) {
+        if (!FileUtil.existsSync(path)) {
             return;
         }
         const stats = await FileUtil.stat(path);
         if (stats.isDirectory()) {
             const names = await FileUtil.readdir(path);
             for (const name of names) {
-                FileUtil.remove(Path.join(path, name));
+                await FileUtil.remove(Path.join(path, name));
             }
             await FileUtil.rmdir(path);
-        } else if (stats.isFile()) {
+        } else {
             await FileUtil.unlink(path);
         }
     },
@@ -123,20 +136,20 @@ const FileUtil = {
     /**
      * 遍历文件/文件夹并执行函数
      * @param {Fs.PathLike} path 路径
-     * @param {(filePath: Fs.PathLike, stat: Fs.Stats) => void} handler 处理函数
+     * @param {(filePath: Fs.PathLike, stat: Fs.Stats) => void | Promise<void>} handler 处理函数
      */
     async map(path, handler) {
-        if (!(await FileUtil.exists(path))) {
+        if (!FileUtil.existsSync(path)) {
             return;
         }
         const stats = await FileUtil.stat(path);
-        if (stats.isFile()) {
-            handler(path, stats);
-        } else {
+        if (stats.isDirectory()) {
             const names = await FileUtil.readdir(path);
             for (const name of names) {
                 await FileUtil.map(Path.join(path, name), handler);
             }
+        } else {
+           await handler(path, stats);
         }
     },
 

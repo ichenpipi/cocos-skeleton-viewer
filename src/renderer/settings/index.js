@@ -1,15 +1,16 @@
 const { shell } = require('electron');
 const { getUrlParam } = require('../../eazax/browser-util');
 const { translate } = require('../../eazax/i18n');
-const RendererUtil = require('../../eazax/renderer-util');
-const ConfigManager = require('../../common/config-manager');
+const RendererEvent = require('../../eazax/renderer-event');
 const PackageUtil = require('../../eazax/package-util');
+const EditorRendererKit = require('../../eazax/editor-renderer-kit');
+const ConfigManager = require('../../common/config-manager');
+
+// 导入 Vue 工具函数
+const { ref, watch, onMounted, onBeforeUnmount, createApp } = Vue;
 
 /** 当前语言 */
 const LANG = getUrlParam('lang');
-
-// 导入 Vue 工具函数
-const { ref, watch, onMounted, onBeforeUnmount } = Vue;
 
 // 构建 Vue 应用
 const App = {
@@ -20,6 +21,7 @@ const App = {
      * @param {*} context 
      */
     setup(props, context) {
+        // console.log('setup', props, context);
 
         // 预设快捷键
         const presets = ref([
@@ -99,13 +101,13 @@ const App = {
             if (selectKey.value === 'custom') {
                 // 自定义输入是否有效
                 if (customKey.value === '') {
-                    RendererUtil.print('warn', translate('customKeyError'));
+                    EditorRendererKit.print('warn', translate('customKeyError'));
                     return;
                 }
                 // 不可以使用双引号（避免 json 值中出现双引号而解析错误，导致插件加载失败）
                 if (customKey.value.includes('"')) {
                     customKey.value = customKey.value.replace(/\"/g, '');
-                    RendererUtil.print('warn', translate('quoteError'));
+                    EditorRendererKit.print('warn', translate('quoteError'));
                     return;
                 }
                 config.hotkey = customKey.value;
@@ -137,6 +139,7 @@ const App = {
          * 生命周期：挂载后
          */
         onMounted(() => {
+            // console.log('onMounted');
             // 获取配置
             getConfig();
             // 覆盖 a 标签点击回调（使用默认浏览器打开网页）
@@ -149,7 +152,7 @@ const App = {
                 });
             });
             // （主进程）检查更新
-            RendererUtil.send('check-update', false);
+            RendererEvent.send('check-update', false);
         });
 
         /**
@@ -175,6 +178,6 @@ const App = {
 };
 
 // 创建实例
-const app = Vue.createApp(App);
+const app = createApp(App);
 // 挂载
 app.mount('#app');

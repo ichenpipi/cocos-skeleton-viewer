@@ -2,12 +2,13 @@ const { shell } = require('electron');
 const Path = require('path');
 const Fs = require('fs');
 const I18n = require('../../eazax/i18n');
-const RendererUtil = require('../../eazax/renderer-util');
+const RendererEvent = require('../../eazax/renderer-event');
+const EditorRendererKit = require('../../eazax/editor-renderer-kit');
 const { hexToRGB } = require('../../eazax/color-util');
 const SpineManager = require('../../common/spine-manager');
 
-/** 语言 */
-const LANG = Editor.lang;
+/** 当前语言 */
+const LANG = Editor.lang || Editor.I18n.getLanguage();
 
 /**
  * i18n
@@ -32,9 +33,15 @@ let skeleton = null,
     bounds = null;
 // 上一帧时间
 let lastFrameTime = null;
+
 // 拖动
 let isDragging = false,
     clickOffset = [0, 0];
+
+// 布局
+let layout = null,
+    resizeObserver = null,
+    resizeHandler = null;
 
 // 构建 Vue 应用
 const App = {
@@ -302,7 +309,7 @@ const App = {
          */
         onSelectBtnClick() {
             // （主进程）选择资源
-            RendererUtil.send('select');
+            RendererEvent.send('select');
         },
 
         /**
@@ -342,7 +349,7 @@ const App = {
             const spine = SpineManager.getSpine(version);
             if (!spine) {
                 const content = `${translate('noSpineRuntime')} | ${translate('version')}: ${version}`;
-                RendererUtil.print('warn', content);
+                EditorRendererKit.print('warn', content);
                 return false;
             }
             window.spine = spine;
@@ -387,7 +394,7 @@ const App = {
                 const config = { alpha: false };
                 gl = canvas.getContext("webgl", config);
                 if (!gl) {
-                    RendererUtil.print('warn', translate('noWebGL'));
+                    EditorRendererKit.print('warn', translate('noWebGL'));
                     return;
                 }
                 const color = this.clearColor;
@@ -435,7 +442,7 @@ const App = {
                 // skel（二进制）
                 assetManager.loadBinary(assets.skel);
             } else {
-                RendererUtil.print('warn', translate('noSkeletonData'));
+                EditorRendererKit.print('warn', translate('noSkeletonData'));
                 return;
             }
             // 图集和纹理
@@ -520,7 +527,7 @@ const App = {
                 }
             } catch (error) {
                 console.error(error);
-                RendererUtil.print('warn', translate('dataMismatch'));
+                EditorRendererKit.print('warn', translate('dataMismatch'));
                 return false;
             }
 
@@ -749,12 +756,12 @@ const App = {
         },
 
         /**
-         * 窗口尺寸变化回调
+         * 布局尺寸变化回调
          */
-        onWindowResize() {
-            const { layout, properties } = this.$refs,
-                layoutStyle = layout.style,
-                propertiesStyle = properties.style;
+        onLayoutResize() {
+            console.log('[methods]', 'onLayoutResize');
+            const layoutStyle = layout.style,
+                propertiesStyle = this.$refs.properties.style;
             if (layout.clientWidth >= 800 || layout.clientHeight < 330) {
                 if (layout.clientWidth >= 350) {
                     // 水平布局
@@ -853,37 +860,45 @@ const App = {
     /**
      * 生命周期：挂载后
      */
-    async mounted() {
+    mounted() {
         console.log('mounted', this);
-        // 触发窗口尺寸适配逻辑
-        this.onWindowResize();
-        // 监听画布鼠标滚轮
+        // 收集元素
         canvas = this.$refs.canvas;
-        canvas.addEventListener('mousewheel', this.onCanvasMouseWheel);
-        // 监听画布鼠标点击
-        canvas.addEventListener('mousedown', this.onCanvasMouseDown);
-        // 监听画布鼠标移动
-        canvas.addEventListener('mousemove', this.onCanvasMouseMove);
-        // 监听画布鼠标松开
-        canvas.addEventListener('mouseup', this.onCanvasMouseUp);
-        // 监听画布鼠标离开
-        canvas.addEventListener('mouseleave', this.onCanvasMouseLeave);
-        // （主进程）监听资源选择事件
-        RendererUtil.on('assets-selected', this.onAssetsSelectedEvent);
-        // 下一帧
+        layout = this.$refs.layout;
+        // 监听画布事件
+        canvas.addEventListener('mousewheel', this.onCanvasMouseWheel); // 监听画布鼠标滚轮
+        canvas.addEventListener('mousedown', this.onCanvasMouseDown);   // 监听画布鼠标点击
+        canvas.addEventListener('mousemove', this.onCanvasMouseMove);   // 监听画布鼠标移动
+        canvas.addEventListener('mouseup', this.onCanvasMouseUp);       // 监听画布鼠标松开
+        canvas.addEventListener('mouseleave', this.onCanvasMouseLeave); // 监听画布鼠标离开
+        // 监听（主进程）资源选择事件
+        RendererEvent.on('assets-selected', this.onAssetsSelectedEvent);
+        // （下一帧）发送事件给主进程
         this.$nextTick(() => {
-            // （主进程）已就绪
-            RendererUtil.send('ready');
-            // （主进程）检查更新
-            RendererUtil.send('check-update', false);
+            RendererEvent.send('ready');                // （主进程）已就绪
+            RendererEvent.send('check-update', false);  // （主进程）检查更新
         });
-        // 延迟执行
+        // 主动触发布局尺寸变化
+        this.onLayoutResize();
+        // 监听布局尺寸变化
         setTimeout(() => {
-            // 监听元素尺寸变化
-            const observer = new ResizeObserver(entries => {
-                this.onWindowResize();
-            });
-            observer.observe(this.$refs.layout);
+            if (window.ResizeObserver) {
+                resizeObserver = new ResizeObserver(entries => {
+                    this.onLayoutResize();
+                });
+                resizeObserver.observe(layout);
+            } else {
+                let lastWidth = layout.clientWidth,
+                    lastHeight = layout.clientHeight;
+                resizeHandler = setInterval(() => {
+                    if (layout.clientWidth !== lastWidth ||
+                        layout.clientHeight !== lastHeight) {
+                        this.onLayoutResize();
+                        lastWidth = layout.clientWidth;
+                        lastHeight = layout.clientHeight;
+                    }
+                }, 500);
+            }
         }, 500);
     },
 
@@ -892,7 +907,15 @@ const App = {
      */
     beforeUnmount() {
         // 取消事件监听
-        RendererUtil.removeAllListeners('assets-selected');
+        RendererEvent.removeAllListeners('assets-selected');
+        // 取消监听布局尺寸变化
+        if (resizeObserver) {
+            resizeObserver.disconnect();
+            resizeObserver = null;
+        } else {
+            clearInterval(resizeHandler);
+            resizeHandler = null;
+        }
     },
 
 };
