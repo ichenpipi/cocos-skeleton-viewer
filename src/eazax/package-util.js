@@ -3,7 +3,7 @@ const PACKAGE_JSON = require('../../package.json');
 
 /**
  * 包工具
- * @author ifaswind (陈皮皮)
+ * @author 陈皮皮 (ifaswind)
  * @version 20210804
  */
 const PackageUtil = {

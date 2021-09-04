@@ -2,16 +2,16 @@ const { BrowserWindow } = require('electron');
 
 /**
  * 窗口工具（主进程）
- * @author ifaswind (陈皮皮)
- * @version 20210802
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210825
  */
 const WindowUtil = {
 
     /**
-     * 获取主窗口（最先打开的窗口）
+     * 最先打开的窗口
      * @returns {BrowserWindow}
      */
-    getMainWindow() {
+    getFirstWindow() {
         const wins = BrowserWindow.getAllWindows();
         return wins[wins.length - 1];
     },
@@ -25,13 +25,13 @@ const WindowUtil = {
     },
 
     /**
-     * 计算窗口位置（相对于主窗口，也就是最先打开的窗口）
+     * 计算窗口位置（相对于最先打开的窗口）
      * @param {[number, number]} size 窗口尺寸
      * @param {'top' | 'center'} anchor 锚点
      * @returns {[number, number]}
      */
     calcWindowPosition(size, anchor) {
-        const win = WindowUtil.getMainWindow();
+        const win = WindowUtil.getFirstWindow();
         return WindowUtil.calcWindowPositionByTarget(size, anchor, win);
     },
 

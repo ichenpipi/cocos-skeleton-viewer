@@ -27,7 +27,7 @@ function onPrintEvent(event, type) {
 
 /**
  * 编辑器主进程套件 (依赖 Cocos Creator 编辑器)
- * @author ifaswind (陈皮皮)
+ * @author 陈皮皮 (ifaswind)
  * @version 20210818
  */
 const EditorMainKit = {

@@ -2,7 +2,7 @@ const RendererEvent = require("./renderer-event");
 
 /**
  * 编辑器渲染进程套件 (依赖 Cocos Creator 编辑器)
- * @author ifaswind (陈皮皮)
+ * @author 陈皮皮 (ifaswind)
  * @version 20210818
  */
 const EditorRendererKit = {

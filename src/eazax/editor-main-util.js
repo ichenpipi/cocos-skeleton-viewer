@@ -13,8 +13,8 @@ const EXTENSION_NAME = I18n.translate(LANG, 'name');
 
 /**
  * 编辑器主进程工具 (依赖 Cocos Creator 编辑器)
- * @author ifaswind (陈皮皮)
- * @version 20210818
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210825
  */
 const EditorMainUtil = {
 
@@ -91,6 +91,16 @@ const EditorMainUtil = {
         } else if (logWhatever) {
             print('info', translate('currentLatest'));
         }
+    },
+
+    /**
+     * （3.x）重新加载扩展
+     */
+    async reload() {
+        const path = await Editor.Package.getPath(PACKAGE_NAME);
+        await Editor.Package.unregister(path);
+        await Editor.Package.register(path);
+        await Editor.Package.enable(path);
     },
 
 };

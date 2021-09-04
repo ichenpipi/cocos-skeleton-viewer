@@ -6,7 +6,7 @@ const PACKAGE_NAME = PackageUtil.name;
 
 /**
  * 主进程 IPC 事件
- * @author ifaswind (陈皮皮)
+ * @author 陈皮皮 (ifaswind)
  * @version 20210818
  */
 const MainEvent = {

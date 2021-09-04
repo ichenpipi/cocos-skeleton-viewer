@@ -3,7 +3,7 @@ const en = require('../../i18n/en');
 
 /**
  * 多语言
- * @author ifaswind (陈皮皮)
+ * @author 陈皮皮 (ifaswind)
  * @version 20210713
  */
 const I18n = {

@@ -4,7 +4,7 @@ const { promisify } = require('util');
 
 /**
  * 文件工具 (Promise 化)
- * @author ifaswind (陈皮皮)
+ * @author 陈皮皮 (ifaswind)
  * @version 20210818
  */
 const FileUtil = {

@@ -23,6 +23,13 @@ const PanelManager = {
     },
 
     /**
+     * 打开预览面板
+     */
+    closeViewPanel() {
+        Editor.Panel.close(`${PACKAGE_NAME}.view`);
+    },
+
+    /**
      * 设置面板实例
      * @type {BrowserWindow}
      */
