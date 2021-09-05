@@ -13,6 +13,7 @@
   "repository": "https://gitee.com/ifaswind/ccc-skeleton-viewer",
   "license": "MIT",
   "main": "src/main/index.js",
+  "scene-script": "src/main/scene.js",
   "main-menu": {
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.view": {
       "message": "ccc-skeleton-viewer:open-view-panel",

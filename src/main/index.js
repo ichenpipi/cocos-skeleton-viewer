@@ -26,8 +26,6 @@ function load() {
  * 生命周期：卸载
  */
 function unload() {
-    // 关闭面板
-    PanelManager.closeViewPanel();
     // 取消事件订阅
     EditorMainKit.unregister();
     MainEvent.removeAllListeners('ready');
@@ -42,7 +40,7 @@ function onReadyEvent(event) {
     // 保存实例
     Opener.renderer = event.sender;
     // 检查编辑器选中
-    Opener.checkEditorSelection();
+    Opener.checkEditorCurSelection();
 }
 
 /**
@@ -59,8 +57,7 @@ function onSelectEvent(event) {
  * @param {string[]} uuids uuids
  */
 function onSelectionSelected(type, uuids) {
-    
-    Opener.selectedInEditor(type, uuids);
+    Opener.identifySelection(type, uuids);
 }
 
 module.exports = {

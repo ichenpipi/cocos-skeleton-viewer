@@ -2,6 +2,11 @@ const { dialog } = require('electron');
 const Fs = require('fs');
 const Path = require('path');
 const { print, translate } = require('../eazax/editor-main-util');
+const MainEvent = require('../eazax/main-event');
+const PackageUtil = require('../eazax/package-util');
+
+/** 包名 */
+const PACKAGE_NAME = PackageUtil.name;
 
 const Opener = {
 
@@ -11,24 +16,53 @@ const Opener = {
      */
     renderer: null,
 
-    selectedInEditor(type, uuids) {
+    /**
+     * 编辑器选择
+     * @param {string} type 
+     * @param {string[]} uuids 
+     */
+    async identifySelection(type, uuids) {
+        if (!Opener.renderer) {
+            return;
+        }
+        // 选中资源
         if (type === 'asset') {
-            Opener.checkCurrentSelection();
-        } else if (type === 'node') {
-
+            Opener.identifyByUuids(uuids);
+        }
+        // 选中节点
+        else if (type === 'node') {
+            const skeletonUuid = await Opener.querySkeletonOnNode(uuids[0]);
+            if (skeletonUuid) {
+                Opener.identifyByUuids([skeletonUuid]);
+            }
         }
     },
 
     /**
-     * 检查编辑器当前选中的资源
+     * 检查编辑器当前选中
      */
-    checkEditorSelection() {
-        // 编辑器当前选中资源 uuid
-        const uuids = Editor.Selection.curSelection('asset');
-        if (uuids.length > 0) {
-            // 识别选择的文件 uuid
-            Opener.identifyByUuids(uuids);
+    checkEditorCurSelection() {
+        const { type, id } = Editor.Selection.curGlobalActivate();
+        if (type && id) {
+            Opener.identifySelection(type, [id]);
         }
+    },
+
+    /**
+     * 查找节点上引用的骨骼资源
+     * @param {string} uuid 
+     * @returns {Promise<string>} 
+     */
+    querySkeletonOnNode(uuid) {
+        return new Promise(res => {
+            Editor.Scene.callSceneScript(PACKAGE_NAME, 'query-skeleton', uuid, (error, uuid) => {
+                if (error || !uuid) {
+                    res(null);
+                } else {
+                    res(uuid);
+                }
+            });
+        });
     },
 
     /**
@@ -91,20 +125,20 @@ const Opener = {
         }
         // 处理路径
         let paths = { spinePath, texturePath, atlasPath };
-        paths = Opener.processPaths(paths);
-        Opener.updateRenderer(paths);
+        const assets = Opener.collectAssets(paths);
+        Opener.updateRenderer(assets);
     },
 
     /**
      * 通过路径识别资源
-     * @param {string[]} files 
+     * @param {string[]} paths 
      */
-    identifyByPaths(files) {
+    identifyByPaths(paths) {
         // 资源路径
         let spinePath, texturePath, atlasPath;
         // 遍历选中的文件路径
-        for (let i = 0; i < files.length; i++) {
-            const path = files[i],
+        for (let i = 0; i < paths.length; i++) {
+            const path = paths[i],
                 extname = Path.extname(path);
             switch (extname) {
                 case '.json':
@@ -133,16 +167,16 @@ const Opener = {
             return;
         }
         // 处理路径
-        let paths = { spinePath, texturePath, atlasPath };
-        paths = Opener.processPaths(paths);
-        Opener.updateRenderer(paths);
+        paths = { spinePath, texturePath, atlasPath };
+        const assets = Opener.collectAssets(paths);
+        Opener.updateRenderer(assets);
     },
 
     /**
      * 收集资源
      * @param {{ spinePath: string, texturePath: string, atlasPath: string }} paths 资源路径
      */
-    processPaths(paths) {
+    collectAssets(paths) {
         let { spinePath, texturePath, atlasPath } = paths;
         // 纹理资源
         if (!texturePath) {
