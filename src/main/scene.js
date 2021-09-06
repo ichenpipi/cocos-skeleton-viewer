@@ -1,25 +1,29 @@
 module.exports = {
 
+    /**
+     * 查询节点上的骨骼资源
+     * @param {*} event 
+     * @param {string} uuid 
+     * @returns 
+     */
     'query-skeleton'(event, uuid) {
-        // 获取场景节点
-        const root = cc.find('Canvas');
-        if (!root) {
-            return event.reply(null, null);
-        }
-        // 获取选中的节点
-        const node = root.getChildByUuid(uuid);
+        // 获取节点
+        const node = cc.engine.getInstanceById(uuid);
         if (!node) {
-            return event.reply(null, null);
+            event.reply(null, null);
+            return;
         }
         // 获取节点上的骨骼组件
         const spine = node.getComponent('sp.Skeleton');
         if (!spine) {
-            return event.reply(null, null);
+            event.reply(null, null);
+            return;
         }
         // 获取骨骼数据
         const skeletonData = spine.skeletonData;
         if (!skeletonData) {
-            return event.reply(null, null);
+            event.reply(null, null);
+            return;
         }
         // 返回资源的 uuid
         event.reply(null, skeletonData._uuid);
