@@ -37,8 +37,6 @@ function unload() {
  * @param {Electron.IpcMainEvent} event 
  */
 function onReadyEvent(event) {
-    // 保存实例
-    Opener.renderer = event.sender;
     // 检查编辑器选中
     Opener.checkEditorCurSelection();
 }
@@ -48,16 +46,18 @@ function onReadyEvent(event) {
  * @param {Electron.IpcMainEvent} event 
  */
 function onSelectEvent(event) {
-    Opener.openLocal();
+    Opener.selectLocalFiles();
 }
 
 /**
- * 检查编辑器选中
+ * 编辑器选中事件回调
  * @param {string} type 类型
  * @param {string[]} uuids uuids
  */
-function onSelectionSelected(type, uuids) {
-    Opener.identifySelection(type, uuids);
+function onEditorSelection(type, uuids) {
+    if (PanelManager.getViewPanel()) {
+        Opener.identifySelection(type, uuids);
+    }
 }
 
 module.exports = {
@@ -74,7 +74,7 @@ module.exports = {
          * @param {string[]} uuids uuids
          */
         'selection:selected'(event, type, uuids) {
-            onSelectionSelected(type, uuids);
+            onEditorSelection(type, uuids);
         },
 
         /**

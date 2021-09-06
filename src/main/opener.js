@@ -4,6 +4,7 @@ const Path = require('path');
 const { print, translate } = require('../eazax/editor-main-util');
 const MainEvent = require('../eazax/main-event');
 const PackageUtil = require('../eazax/package-util');
+const PanelManager = require('./panel-manager');
 
 /** 包名 */
 const PACKAGE_NAME = PackageUtil.name;
@@ -11,20 +12,11 @@ const PACKAGE_NAME = PackageUtil.name;
 const Opener = {
 
     /**
-     * 渲染进程的 EventEmitter
-     * @type {EventEmitter}
-     */
-    renderer: null,
-
-    /**
      * 编辑器选择
      * @param {string} type 
      * @param {string[]} uuids 
      */
     async identifySelection(type, uuids) {
-        if (!Opener.renderer) {
-            return;
-        }
         // 选中资源
         if (type === 'asset') {
             Opener.identifyByUuids(uuids);
@@ -34,7 +26,11 @@ const Opener = {
             const skeletonUuid = await Opener.querySkeletonOnNode(uuids[0]);
             if (skeletonUuid) {
                 Opener.identifyByUuids([skeletonUuid]);
+            } else {
+                Opener.updateView(null);
             }
+        } else {
+            Opener.updateView(null);
         }
     },
 
@@ -45,6 +41,8 @@ const Opener = {
         const { type, id } = Editor.Selection.curGlobalActivate();
         if (type && id) {
             Opener.identifySelection(type, [id]);
+        } else {
+            Opener.updateView(null);
         }
     },
 
@@ -68,7 +66,7 @@ const Opener = {
     /**
      * 选择本地文件
      */
-    async openLocal() {
+    async selectLocalFiles() {
         // 弹窗选择文件
         const result = await dialog.showOpenDialog({
             filters: [{
@@ -112,7 +110,7 @@ const Opener = {
         }
         // 是否有选中 Spine 资源
         if (!spinePath) {
-            Opener.updateRenderer(null);
+            Opener.updateView(null);
             return;
         }
         // 是否有选中图集资源
@@ -126,7 +124,7 @@ const Opener = {
         // 处理路径
         let paths = { spinePath, texturePath, atlasPath };
         const assets = Opener.collectAssets(paths);
-        Opener.updateRenderer(assets);
+        Opener.updateView(assets);
     },
 
     /**
@@ -169,7 +167,7 @@ const Opener = {
         // 处理路径
         paths = { spinePath, texturePath, atlasPath };
         const assets = Opener.collectAssets(paths);
-        Opener.updateRenderer(assets);
+        Opener.updateView(assets);
     },
 
     /**
@@ -249,15 +247,14 @@ const Opener = {
     },
 
     /**
-     * 更新渲染进程
-     * @param {{ dir: string, json: string, atlas: string, png: string }} assets 
+     * 更新视图
+     * @param {{ dir: string, json: string, atlas: string, png: string } | null} assets 
      */
-    updateRenderer(assets) {
-        if (!Opener.renderer || Opener.renderer.isDestroyed()) {
-            Opener.renderer = null;
-            return;
+    updateView(assets) {
+        const webContents = PanelManager.getViewPanel();
+        if (webContents) {
+            MainEvent.send(webContents, 'assets-selected', assets);
         }
-        MainEvent.send(Opener.renderer, 'assets-selected', assets);
     },
 
 };

@@ -23,6 +23,19 @@ const PanelManager = {
     },
 
     /**
+     * 获取预览面板
+     * @returns {Electron.WebContents | null}
+     */
+    getViewPanel() {
+        const panel = Editor.Panel.findWindow(`${PACKAGE_NAME}.view`);
+        if (panel) {
+            const webContents = panel.nativeWin.webContents;
+            return webContents;
+        }
+        return null;
+    },
+
+    /**
      * 设置面板实例
      * @type {BrowserWindow}
      */
