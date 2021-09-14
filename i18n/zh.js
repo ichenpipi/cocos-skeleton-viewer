@@ -5,7 +5,9 @@ module.exports = {
     'checkUpdate': '检查更新',
     // update
     'currentLatest': '当前已是最新版本！',
-    'hasNewVersion': '发现新版本：',
+    'hasNewVersion': '发现新版本！',
+    'localVersion': '本地版本：',
+    'latestVersion': '最新版本：',
     'releases': '发行版：https://gitee.com/ifaswind/ccc-skeleton-viewer/releases',
     'cocosStore': 'Cocos 商店：http://store.cocos.com/app/detail/3008',
     // main

@@ -1,6 +1,6 @@
 {
   "name": "ccc-skeleton-viewer",
-  "version": "1.2.0.20210819",
+  "version": "1.3.0.20210915",
   "description": "用于快速预览骨骼动画，提供独立窗口，也可以附着在编辑器中...",
   "author": {
     "name": "陈皮皮 (ifaswind)",
@@ -13,7 +13,7 @@
   "repository": "https://gitee.com/ifaswind/ccc-skeleton-viewer",
   "license": "MIT",
   "main": "src/main/index.js",
-  "scene-script": "src/main/scene.js",
+  "scene-script": "src/main/scene-worker.js",
   "main-menu": {
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.view": {
       "message": "ccc-skeleton-viewer:open-view-panel",
@@ -26,6 +26,10 @@
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.checkUpdate": {
       "message": "ccc-skeleton-viewer:menu-check-update",
       "icon": "/images/update.png"
+    },
+    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/v1.3.0.20210915": {
+      "message": "ccc-skeleton-viewer:menu-version",
+      "icon": "/images/version.png"
     }
   },
   "panel.view": {

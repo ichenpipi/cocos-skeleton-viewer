@@ -1,7 +1,7 @@
 /**
- * Spine 运行时管理器
+ * Spine 运行时
  */
-const SpineManager = {
+const SpineRuntime = {
 
     /**
      * 缓存
@@ -15,11 +15,11 @@ const SpineManager = {
     },
 
     /**
-     * 获取 Spine 运行时
+     * 获取指定版本的 Spine 运行时
      * @param {string} version 版本
      */
-    getSpine(version) {
-        const cache = SpineManager.cache;
+    get(version) {
+        const cache = SpineRuntime.cache;
         if (cache[version] == null) {
             const libPath = `../../lib/spine-runtimes/${version}/spine-webgl`;
             cache[version] = require(libPath);
@@ -31,4 +31,4 @@ const SpineManager = {
 
 };
 
-module.exports = SpineManager;
+module.exports = SpineRuntime;

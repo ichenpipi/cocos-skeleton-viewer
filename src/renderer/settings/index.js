@@ -21,7 +21,6 @@ const App = {
      * @param {*} context 
      */
     setup(props, context) {
-        // console.log('setup', props, context);
 
         // 预设快捷键
         const presets = ref([
@@ -139,7 +138,6 @@ const App = {
          * 生命周期：挂载后
          */
         onMounted(() => {
-            // console.log('onMounted');
             // 获取配置
             getConfig();
             // 覆盖 a 标签点击回调（使用默认浏览器打开网页）

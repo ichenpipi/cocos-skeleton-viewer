@@ -1,32 +1,26 @@
-const PanelManager = require('./panel-manager');
-const ConfigManager = require('../common/config-manager');
 const MainEvent = require('../eazax/main-event');
 const EditorMainKit = require('../eazax/editor-main-kit');
 const { checkUpdate } = require('../eazax/editor-main-util');
+const { openRepository } = require('../eazax/package-util');
+const ConfigManager = require('../common/config-manager');
 const Opener = require('./opener');
+const PanelManager = require('./panel-manager');
 
 /**
  * 生命周期：加载
  */
 function load() {
-    // 订阅事件
+    // 监听事件
     EditorMainKit.register();
     MainEvent.on('ready', onReadyEvent);
     MainEvent.on('select', onSelectEvent);
-    // 自动检查更新
-    const config = ConfigManager.get();
-    if (config.autoCheckUpdate) {
-        // 延迟一段时间
-        const delay = 6 * 60 * 1000;
-        setTimeout(() => checkUpdate(false), delay);
-    }
 }
 
 /**
  * 生命周期：卸载
  */
 function unload() {
-    // 取消事件订阅
+    // 取消事件监听
     EditorMainKit.unregister();
     MainEvent.removeAllListeners('ready');
     MainEvent.removeAllListeners('select');
@@ -96,6 +90,26 @@ module.exports = {
          */
         'menu-check-update'() {
             checkUpdate(true);
+        },
+
+        /**
+         * 版本
+         * @param {*} event 
+         */
+        'menu-version'(event) {
+            openRepository();
+        },
+
+        /**
+         * 场景面板加载完成后
+         * @param {*} event 
+         */
+        'scene:ready'(event) {
+            // 自动检查更新
+            const config = ConfigManager.get();
+            if (config.autoCheckUpdate) {
+                checkUpdate(false);
+            }
         },
 
     },

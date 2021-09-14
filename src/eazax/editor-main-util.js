@@ -14,7 +14,7 @@ const EXTENSION_NAME = I18n.translate(LANG, 'name');
 /**
  * 编辑器主进程工具 (依赖 Cocos Creator 编辑器)
  * @author 陈皮皮 (ifaswind)
- * @version 20210825
+ * @version 20210910
  */
 const EditorMainUtil = {
 
@@ -83,13 +83,17 @@ const EditorMainUtil = {
         const hasNewVersion = await Updater.check();
         // 打印到控制台
         const { print, translate } = EditorMainUtil;
+        const localVersion = Updater.getLocalVersion();
         if (hasNewVersion) {
             const remoteVersion = await Updater.getRemoteVersion();
-            print('info', `${translate('hasNewVersion')}${remoteVersion}`);
+            print('info', translate('hasNewVersion'));
+            print('info', `${translate('localVersion')}${localVersion}`);
+            print('info', `${translate('latestVersion')}${remoteVersion}`);
             print('info', translate('releases'));
             print('info', translate('cocosStore'));
         } else if (logWhatever) {
             print('info', translate('currentLatest'));
+            print('info', `${translate('localVersion')}${localVersion}`);
         }
     },
 

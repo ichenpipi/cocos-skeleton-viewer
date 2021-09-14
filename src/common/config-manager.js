@@ -2,20 +2,20 @@ const Path = require('path');
 const Fs = require('fs');
 const PackageUtil = require('../eazax/package-util');
 
-/** 包名 */
-const PACKAGE_NAME = PackageUtil.name;
+/** 配置文件路径 */
+const CONFIG_PATH = Path.join(__dirname, '../../config.json');
 
 /** package.json 的路径 */
 const PACKAGE_PATH = Path.join(__dirname, '../../package.json');
+
+/** 包名 */
+const PACKAGE_NAME = PackageUtil.name;
 
 /** 快捷键行为 */
 const ACTION_NAME = 'view';
 
 /** package.json 中的菜单项 key */
 const MENU_ITEM_KEY = `i18n:MAIN_MENU.package.title/i18n:${PACKAGE_NAME}.name/i18n:${PACKAGE_NAME}.${ACTION_NAME}`;
-
-/** 配置文件路径 */
-const CONFIG_PATH = Path.join(__dirname, '../../config.json');
 
 /**
  * 配置管理器
@@ -34,41 +34,67 @@ const ConfigManager = {
 
     /**
      * 读取配置
-     * @returns {{ autoCheckUpdate: boolean }}
      */
     get() {
-        const configData = ConfigManager.defaultConfig;
         // 配置
+        const config = ConfigManager.defaultConfig;
         if (Fs.existsSync(CONFIG_PATH)) {
             const localConfig = JSON.parse(Fs.readFileSync(CONFIG_PATH));
-            configData.autoCheckUpdate = localConfig.autoCheckUpdate;
+            for (const key in config) {
+                if (localConfig[key] !== undefined) {
+                    config[key] = localConfig[key];
+                }
+            }
         }
+
         // 快捷键
-        const packageData = JSON.parse(Fs.readFileSync(PACKAGE_PATH)),
-            menuItem = packageData['main-menu'][MENU_ITEM_KEY];
-        configData.hotkey = menuItem['accelerator'] || '';
+        config.hotkey = ConfigManager.getAccelerator();
+
         // Done
-        return configData;
+        return config;
     },
 
     /**
      * 保存配置
-     * @param {{ autoCheckUpdate: boolean }} config 配置
+     * @param {*} config 配置
      */
-    set(config) {
-        const configData = ConfigManager.defaultConfig;
+    set(value) {
         // 配置
-        configData.autoCheckUpdate = config.autoCheckUpdate;
-        Fs.writeFileSync(CONFIG_PATH, JSON.stringify(configData, null, 2));
-        // 快捷键
-        const packageData = JSON.parse(Fs.readFileSync(PACKAGE_PATH)),
-            menuItem = packageData['main-menu'][MENU_ITEM_KEY];
-        if (config.hotkey && config.hotkey !== '') {
-            menuItem['accelerator'] = config.hotkey;
-        } else {
-            delete menuItem['accelerator'];
+        const config = ConfigManager.defaultConfig;
+        for (const key in config) {
+            if (value[key] !== undefined) {
+                config[key] = value[key];
+            }
         }
-        Fs.writeFileSync(PACKAGE_PATH, JSON.stringify(packageData, null, 2));
+        Fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+
+        // 快捷键
+        ConfigManager.setAccelerator(value.hotkey);
+    },
+
+    /**
+     * 获取快捷键
+     * @returns {string}
+     */
+    getAccelerator() {
+        const package = JSON.parse(Fs.readFileSync(PACKAGE_PATH)),
+            item = package['main-menu'][MENU_ITEM_KEY];
+        return item['accelerator'] || '';
+    },
+
+    /**
+     * 设置快捷键
+     * @param {string} value 
+     */
+    setAccelerator(value) {
+        const package = JSON.parse(Fs.readFileSync(PACKAGE_PATH)),
+            item = package['main-menu'][MENU_ITEM_KEY];
+        if (value != undefined && value !== '') {
+            item['accelerator'] = value;
+        } else {
+            delete item['accelerator'];
+        }
+        Fs.writeFileSync(PACKAGE_PATH, JSON.stringify(package, null, 2));
     },
 
 };

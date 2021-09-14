@@ -5,7 +5,7 @@ const I18n = require('../../eazax/i18n');
 const RendererEvent = require('../../eazax/renderer-event');
 const EditorRendererKit = require('../../eazax/editor-renderer-kit');
 const { hexToRGB } = require('../../eazax/color-util');
-const SpineManager = require('../../common/spine-manager');
+const SpineRuntime = require('../../common/spine-runtime');
 
 /** 当前语言 */
 const LANG = Editor.lang || Editor.I18n.getLanguage();
@@ -346,7 +346,7 @@ const App = {
             // 处理版本号（保留前两个分量）
             version = version.split('.').slice(0, 2).map(v => parseInt(v)).join('.');
             // 获取目标版本的 Spine 运行时对象
-            const spine = SpineManager.getSpine(version);
+            const spine = SpineRuntime.get(version);
             if (!spine) {
                 const content = `${translate('noSpineRuntime')} | ${translate('version')}: ${version}`;
                 EditorRendererKit.print('warn', content);

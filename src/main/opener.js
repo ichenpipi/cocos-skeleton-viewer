@@ -54,11 +54,7 @@ const Opener = {
     querySkeletonOnNode(uuid) {
         return new Promise(res => {
             Editor.Scene.callSceneScript(PACKAGE_NAME, 'query-skeleton', uuid, (error, uuid) => {
-                if (error || !uuid) {
-                    res(null);
-                } else {
-                    res(uuid);
-                }
+                res(error ? null : uuid);
             });
         });
     },

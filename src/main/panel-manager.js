@@ -50,8 +50,8 @@ const PanelManager = {
             PanelManager.settings.show();
             return;
         }
-        // 窗口高度和位置（macOS 标题栏高 28px）
-        const winSize = [500, 340],
+        // 窗口高度和位置
+        const winSize = [500, 290],
             winPos = calcWindowPosition(winSize, 'center');
         // 创建窗口
         const win = PanelManager.settings = new BrowserWindow({
@@ -61,6 +61,7 @@ const PanelManager = {
             minHeight: winSize[1],
             x: winPos[0],
             y: winPos[1] - 100,
+            useContentSize: true,
             frame: true,
             title: `${EXTENSION_NAME} | Cocos Creator`,
             autoHideMenuBar: true,
@@ -74,21 +75,22 @@ const PanelManager = {
             show: false,
             webPreferences: {
                 nodeIntegration: true,
+                contextIsolation: false,
             },
-        });
-        // 监听按键
-        win.webContents.on('before-input-event', (event, input) => {
-            if (input.key === 'Escape') PanelManager.closeSettingsPanel();
         });
         // 就绪后展示（避免闪烁）
         win.on('ready-to-show', () => win.show());
         // 关闭后
         win.on('closed', () => (PanelManager.settings = null));
+        // 监听按键
+        win.webContents.on('before-input-event', (event, input) => {
+            if (input.key === 'Escape') PanelManager.closeSettingsPanel();
+        });
+        // 调试用的 devtools（detach 模式需要取消失焦自动关闭）
+        // win.webContents.openDevTools({ mode: 'detach' });
         // 加载页面
         const path = join(__dirname, '../renderer/settings/index.html');
         win.loadURL(`file://${path}?lang=${language}`);
-        // 调试用的 devtools（detach 模式需要取消失焦自动关闭）
-        // win.webContents.openDevTools({ mode: 'detach' });
     },
 
     /**
