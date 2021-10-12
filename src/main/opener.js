@@ -66,11 +66,11 @@ const Opener = {
         // 弹窗选择文件
         const result = await dialog.showOpenDialog({
             filters: [{
-                name: translate('skeletonAssets'),
+                name: translate('skeleton-assets'),
                 extensions: ['json', 'skel', 'png', 'atlas'],
             }],
             properties: ['openFile', 'multiSelections'],
-            message: translate('selectAssets'),
+            message: translate('select-assets'),
         });
         // 取消
         if (!result || result.canceled) {
@@ -157,7 +157,7 @@ const Opener = {
         }
         // 是否有选中 spine 资源
         if (!spinePath) {
-            print('warn', translate('noSkeleton'));
+            print('warn', translate('no-skeleton'));
             return;
         }
         // 处理路径
@@ -179,7 +179,7 @@ const Opener = {
         }
         // 找不到纹理啊
         if (!texturePath) {
-            print('warn', translate('noTexture'));
+            print('warn', translate('no-texture'));
             return null;
         }
         // 图集资源
@@ -197,7 +197,7 @@ const Opener = {
         }
         // 找不到图集啊
         if (!atlasPath) {
-            print('warn', translate('noAtlas'));
+            print('warn', translate('no-atlas'));
             return null;
         }
         // 文件类型（json 或 skel）

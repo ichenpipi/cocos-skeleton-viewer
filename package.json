@@ -21,7 +21,7 @@
     },
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.settings": {
       "message": "ccc-skeleton-viewer:open-settings-panel",
-      "icon": "/images/setting.png"
+      "icon": "/images/settings.png"
     },
     "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.checkUpdate": {
       "message": "ccc-skeleton-viewer:menu-check-update",

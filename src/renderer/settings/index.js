@@ -1,6 +1,6 @@
 const { shell } = require('electron');
 const { getUrlParam } = require('../../eazax/browser-util');
-const { translate } = require('../../eazax/i18n');
+const I18n = require('../../eazax/i18n');
 const RendererEvent = require('../../eazax/renderer-event');
 const PackageUtil = require('../../eazax/package-util');
 const EditorRendererKit = require('../../eazax/editor-renderer-kit');
@@ -25,7 +25,7 @@ const App = {
         // 预设快捷键
         const presets = ref([
             { key: '', name: t('none') },
-            { key: 'custom', name: t('customKey') },
+            { key: 'custom', name: t('custom-key') },
             { key: 'F1', name: 'F1' },
             { key: 'F3', name: 'F3' },
             { key: 'F4', name: 'F4' },
@@ -100,13 +100,13 @@ const App = {
             if (selectKey.value === 'custom') {
                 // 自定义输入是否有效
                 if (customKey.value === '') {
-                    EditorRendererKit.print('warn', translate('customKeyError'));
+                    EditorRendererKit.print('warn', t('custom-key-error'));
                     return;
                 }
                 // 不可以使用双引号（避免 json 值中出现双引号而解析错误，导致插件加载失败）
                 if (customKey.value.includes('"')) {
                     customKey.value = customKey.value.replace(/\"/g, '');
-                    EditorRendererKit.print('warn', translate('quoteError'));
+                    EditorRendererKit.print('warn', t('quote-error'));
                     return;
                 }
                 config.hotkey = customKey.value;
@@ -131,7 +131,7 @@ const App = {
          * @param {string} key 
          */
         function t(key) {
-            return translate(LANG, key);
+            return I18n.get(LANG, key);
         }
 
         /**

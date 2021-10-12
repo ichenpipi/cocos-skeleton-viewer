@@ -9,12 +9,12 @@ const LANG = Editor.lang || Editor.I18n.getLanguage();
 const PACKAGE_NAME = PackageUtil.name;
 
 /** 扩展名称 */
-const EXTENSION_NAME = I18n.translate(LANG, 'name');
+const EXTENSION_NAME = I18n.get(LANG, 'name');
 
 /**
  * 编辑器主进程工具 (依赖 Cocos Creator 编辑器)
  * @author 陈皮皮 (ifaswind)
- * @version 20210910
+ * @version 20210929
  */
 const EditorMainUtil = {
 
@@ -31,16 +31,51 @@ const EditorMainUtil = {
      * @returns {string}
      */
     translate(key) {
-        return I18n.translate(LANG, key);
+        return I18n.get(LANG, key);
     },
 
     /**
-     * 打印信息到控制台
+     * 打印信息到控制台（带标题）
      * @param {'log' | 'info' | 'warn' | 'error' | any} type
      * @param {any[]?} args 
      */
     print(type) {
         const args = [`[${EXTENSION_NAME}]`];
+        for (let i = 1, l = arguments.length; i < l; i++) {
+            args.push(arguments[i]);
+        }
+        const object = Editor.log ? Editor : console;
+        switch (type) {
+            case 'log': {
+                object.log.apply(object, args);
+                break;
+            }
+            case 'info': {
+                object.info.apply(object, args);
+                break;
+            }
+            case 'warn': {
+                object.warn.apply(object, args);
+                break;
+            }
+            case 'error': {
+                object.error.apply(object, args);
+                break;
+            }
+            default: {
+                args.splice(1, 0, type);
+                object.log.apply(object, args);
+            }
+        }
+    },
+
+    /**
+     * 打印信息到控制台（不带标题）
+     * @param {'log' | 'info' | 'warn' | 'error' | any} type
+     * @param {any[]?} args 
+     */
+    pureWithoutTitle(type) {
+        const args = [];
         for (let i = 1, l = arguments.length; i < l; i++) {
             args.push(arguments[i]);
         }
@@ -86,14 +121,14 @@ const EditorMainUtil = {
         const localVersion = Updater.getLocalVersion();
         if (hasNewVersion) {
             const remoteVersion = await Updater.getRemoteVersion();
-            print('info', translate('hasNewVersion'));
-            print('info', `${translate('localVersion')}${localVersion}`);
-            print('info', `${translate('latestVersion')}${remoteVersion}`);
-            print('info', translate('releases'));
-            print('info', translate('cocosStore'));
+            print('info', translate('has-new-version'));
+            print('info', `${translate('local-version')}${localVersion}`);
+            print('info', `${translate('latest-version')}${remoteVersion}`);
+            print('info', translate('git-releases'));
+            print('info', translate('cocos-store'));
         } else if (logWhatever) {
-            print('info', translate('currentLatest'));
-            print('info', `${translate('localVersion')}${localVersion}`);
+            print('info', translate('current-latest'));
+            print('info', `${translate('local-version')}${localVersion}`);
         }
     },
 

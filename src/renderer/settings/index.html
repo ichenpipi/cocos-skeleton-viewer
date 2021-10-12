@@ -21,8 +21,8 @@
             <!-- 选择快捷键 -->
             <div class="property">
                 <div class="label">
-                    <span class="text">{{ t('selectKey') }}</span>
-                    <span class="tooltip">{{ t('selectKeyTooltip') }}</span>
+                    <span class="text">{{ t('select-key') }}</span>
+                    <span class="tooltip">{{ t('select-key-tooltip') }}</span>
                 </div>
                 <div class="content">
                     <select v-model="selectKey">
@@ -33,18 +33,18 @@
             <!-- 自定义快捷键 -->
             <div class="property">
                 <div class="label">
-                    <span class="text">{{ t('customKey') }}</span>
-                    <span class="tooltip">{{ t('customKeyTooltip') }}</span>
+                    <span class="text">{{ t('custom-key') }}</span>
+                    <span class="tooltip">{{ t('custom-key-tooltip') }}</span>
                 </div>
                 <div class="content">
-                    <input v-model="customKey" :placeholder="t('customKeyPlaceholder')" />
+                    <input v-model="customKey" :placeholder="t('custom-key-placeholder')" />
                 </div>
             </div>
             <!-- 自动检查更新 -->
             <div class="property">
                 <div class="label">
-                    <span class="text">{{ t('autoCheck') }}</span>
-                    <span class="tooltip">{{ t('autoCheckTooltip') }}</span>
+                    <span class="text">{{ t('auto-check-update') }}</span>
+                    <span class="tooltip">{{ t('auto-check-update-tooltip') }}</span>
                 </div>
                 <div class="content">
                     <input type="checkbox" v-model="autoCheckUpdate" />

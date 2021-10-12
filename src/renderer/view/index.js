@@ -15,7 +15,7 @@ const LANG = Editor.lang || Editor.I18n.getLanguage();
  * @param {string} key
  * @returns {string}
  */
-const translate = (key) => I18n.translate(LANG, key);
+const translate = (key) => I18n.get(LANG, key);
 
 // 环境
 let canvas = null,
@@ -137,7 +137,7 @@ const App = {
          */
         assetsInfo() {
             if (!this.assetManager) {
-                return `💡 ${translate('noAssets')}`;
+                return `💡 ${translate('no-assets')}`;
             };
             let skeletonPath = '',
                 texturePath = '',
@@ -332,29 +332,26 @@ const App = {
          * 获取 Spine 运行时
          */
         getRuntime() {
-            console.log('[methods]', 'getRuntime');
             // 资源对应的 Spine 运行时版本
             let version = this.getAssetSpineVersion(this.assets.json || this.assets.skel);
             if (!version) {
-                // RendererUtil.print('warn', translate('noVersion'));
+                // RendererUtil.print('warn', translate('no-version'));
                 // return false;
-                console.warn('Unable to identify Spine version of asset!');
+                console.warn('Unable to identify Spine version of asset, using 3.8 instead.');
                 // 默认使用 3.8 的 Runtime
                 version = "3.8";
             }
-            console.log('Skeleton spine version', version);
             // 处理版本号（保留前两个分量）
             version = version.split('.').slice(0, 2).map(v => parseInt(v)).join('.');
             // 获取目标版本的 Spine 运行时对象
             const spine = SpineRuntime.get(version);
             if (!spine) {
-                const content = `${translate('noSpineRuntime')} | ${translate('version')}: ${version}`;
+                const content = `${translate('no-spine-runtime')} | ${translate('version')}: ${version}`;
                 EditorRendererKit.print('warn', content);
                 return false;
             }
             window.spine = spine;
             this.version = spine.version;
-            console.log('Spine runtime version', spine.version);
             return true;
         },
 
@@ -384,7 +381,6 @@ const App = {
          * 初始化 Spine 运行时
          */
         initRuntime() {
-            console.log('[methods]', 'initRuntime');
             // 获取画布
             if (!canvas) {
                 canvas = this.$refs.canvas;
@@ -394,7 +390,7 @@ const App = {
                 const config = { alpha: false };
                 gl = canvas.getContext("webgl", config);
                 if (!gl) {
-                    EditorRendererKit.print('warn', translate('noWebGL'));
+                    EditorRendererKit.print('warn', translate('no-webgl'));
                     return;
                 }
                 const color = this.clearColor;
@@ -424,7 +420,6 @@ const App = {
          * 加载资源
          */
         loadAssets() {
-            console.log('[methods]', 'loadAssets');
             const assetManager = this.assetManager;
             if (!assetManager) {
                 return;
@@ -442,7 +437,7 @@ const App = {
                 // skel（二进制）
                 assetManager.loadBinary(assets.skel);
             } else {
-                EditorRendererKit.print('warn', translate('noSkeletonData'));
+                EditorRendererKit.print('warn', translate('no-skeleton-data'));
                 return;
             }
             // 图集和纹理
@@ -474,8 +469,9 @@ const App = {
             // 文件是否已加载完成
             if (this.assetManager.isLoadingComplete()) {
                 // 加载骨骼数据
-                const result = this.loadSkeleton();
-                if (!result) {
+                const success = this.loadSkeleton();
+                if (!success) {
+                    console.error('Failed to load skeleton data!');
                     this.reset();
                     return;
                 }
@@ -502,7 +498,6 @@ const App = {
          * 加载骨骼数据
          */
         loadSkeleton() {
-            console.log('[methods]', 'loadSkeleton');
             const assetManager = this.assetManager,
                 assets = this.assets;
 
@@ -527,7 +522,7 @@ const App = {
                 }
             } catch (error) {
                 console.error(error);
-                EditorRendererKit.print('warn', translate('dataMismatch'));
+                EditorRendererKit.print('warn', translate('data-mismatch'));
                 return false;
             }
 
@@ -708,7 +703,6 @@ const App = {
          * @param {{ dir?: string, json?: string, skel?: string, atlas: string, png: string }} assets 资源
          */
         onAssetsSelectedEvent(event, assets) {
-            console.log('[methods]', 'onAssetsSelectedEvent', assets);
             // 重置
             if (this.assets) {
                 this.reset();
@@ -752,14 +746,12 @@ const App = {
             }
             assets.atlas = Path.basename(atlas);
             assets.png = Path.basename(png);
-            console.log('[methods]', 'processAssetPaths', this.assets);
         },
 
         /**
          * 布局尺寸变化回调
          */
         onLayoutResize() {
-            console.log('[methods]', 'onLayoutResize');
             const layoutStyle = layout.style,
                 propertiesStyle = this.$refs.properties.style;
             if (layout.clientWidth >= 800 || layout.clientHeight < 330) {
@@ -861,7 +853,6 @@ const App = {
      * 生命周期：挂载后
      */
     mounted() {
-        console.log('mounted', this);
         // 收集元素
         canvas = this.$refs.canvas;
         layout = this.$refs.layout;
