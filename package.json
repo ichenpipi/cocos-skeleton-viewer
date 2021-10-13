@@ -23,7 +23,7 @@
       "message": "ccc-skeleton-viewer:open-settings-panel",
       "icon": "/images/settings.png"
     },
-    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.checkUpdate": {
+    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.check-update": {
       "message": "ccc-skeleton-viewer:menu-check-update",
       "icon": "/images/update.png"
     },
