@@ -1,9 +1,10 @@
 {
   "name": "ccc-skeleton-viewer",
-  "version": "1.3.0.20210915",
+  "package_version": 2,
+  "version": "1.4.0.20220128",
   "description": "用于快速预览骨骼动画，提供独立窗口，也可以附着在编辑器中...",
-  "author": {
-    "name": "陈皮皮 (ifaswind)",
+  "author": "陈皮皮 (ifaswind)",
+  "author-info": {
     "email": "952157129@qq.com",
     "url": "https://chenpipi.cn",
     "wechat": "im_chenpipi",
@@ -13,43 +14,104 @@
   "repository": "https://gitee.com/ifaswind/ccc-skeleton-viewer",
   "license": "MIT",
   "main": "src/main/index.js",
-  "scene-script": "src/main/scene-worker.js",
-  "main-menu": {
-    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.view": {
-      "message": "ccc-skeleton-viewer:open-view-panel",
-      "icon": "/images/view.png"
+  "contributions": {
+    "menu": [
+      {
+        "path": "i18n:menu.extension/i18n:ccc-skeleton-viewer.name",
+        "label": "i18n:ccc-skeleton-viewer.view",
+        "message": "open-view-panel",
+        "icon": "/images/view.png"
+      },
+      {
+        "path": "i18n:menu.extension/i18n:ccc-skeleton-viewer.name",
+        "label": "i18n:ccc-skeleton-viewer.settings",
+        "message": "open-settings-panel",
+        "icon": "/images/settings.png"
+      },
+      {
+        "path": "i18n:menu.extension/i18n:ccc-skeleton-viewer.name",
+        "label": "i18n:ccc-skeleton-viewer.checkUpdate",
+        "message": "menu-check-update",
+        "icon": "/images/update.png"
+      },
+      {
+        "path": "i18n:menu.extension/i18n:ccc-skeleton-viewer.name",
+        "label": "v1.3.0.20210915",
+        "message": "menu-version",
+        "icon": "/images/version.png"
+      }
+    ],
+    "messages": {
+      "open-view-panel": {
+        "public": true,
+        "description": "打开预览面板",
+        "methods": [
+          "openViewPanel"
+        ]
+      },
+      "open-settings-panel": {
+        "public": true,
+        "description": "打开设置面板",
+        "methods": [
+          "openSettingsPanel"
+        ]
+      },
+      "menu-check-update": {
+        "public": true,
+        "description": "检查扩展是否有更新",
+        "methods": [
+          "menuCheckUpdate"
+        ]
+      },
+      "menu-version": {
+        "public": false,
+        "methods": [
+          "menuVersion"
+        ]
+      },
+      "scene:ready": {
+        "methods": [
+          "onSceneReady"
+        ]
+      },
+      "selection:select": {
+        "methods": [
+          "onSelectionSelect"
+        ]
+      }
     },
-    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.settings": {
-      "message": "ccc-skeleton-viewer:open-settings-panel",
-      "icon": "/images/setting.png"
-    },
-    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/i18n:ccc-skeleton-viewer.checkUpdate": {
-      "message": "ccc-skeleton-viewer:menu-check-update",
-      "icon": "/images/update.png"
-    },
-    "i18n:MAIN_MENU.package.title/i18n:ccc-skeleton-viewer.name/v1.3.0.20210915": {
-      "message": "ccc-skeleton-viewer:menu-version",
-      "icon": "/images/version.png"
+    "shortcuts": [
+      {
+        "message": "open-view-panel",
+        "mac": "",
+        "win": ""
+      }
+    ],
+    "assets": {
+      "menu": {
+        "methods": "src/editor/assets-menu.js",
+        "createMenu": "",
+        "assetMenu": "onAssetMenu",
+        "dbMenu": "",
+        "panelMenu": ""
+      }
     }
   },
-  "panel.view": {
-    "main": "src/renderer/view/entry.js",
-    "type": "dockable",
-    "title": "i18n:ccc-skeleton-viewer.name",
-    "width": 500,
-    "height": 600,
-    "min-width": 300,
-    "min-height": 250
-  },
-  "reload": {
-    "renderer": [
-      "src/renderer/**/*"
-    ],
-    "ignore": [
-      "config.json",
-      "CHANGELOG.md",
-      "README.md",
-      "README.en.md"
-    ]
+  "panels": {
+    "view": {
+      "title": "i18n:ccc-skeleton-viewer.name",
+      "type": "dockable",
+      "main": "src/renderer/view/entry.js",
+      "icon": "/images/icon.png",
+      "size": {
+        "width": 500,
+        "height": 600,
+        "min-width": 300,
+        "min-height": 250
+      },
+      "flags": {
+        "alwaysOnTop": true
+      }
+    }
   }
 }

@@ -2,7 +2,8 @@ const { BrowserWindow } = require('electron');
 const { join } = require('path');
 const PackageUtil = require('../eazax/package-util');
 const { language, translate } = require('../eazax/editor-main-util');
-const { calcWindowPosition } = require('../eazax/window-util');
+const { calcWindowPositionByFocused } = require('../eazax/window-util');
+const EditorAdapter = require('../common/editor-adapter');
 
 /** 包名 */
 const PACKAGE_NAME = PackageUtil.name;
@@ -15,22 +16,33 @@ const EXTENSION_NAME = translate('name');
  */
 const PanelManager = {
 
+    /** 
+     * 预览面板的 WebContents
+     * @type {Electron.WebContents}
+     */
+    viewWebContents: null,
+
     /**
      * 打开预览面板
      */
     openViewPanel() {
-        Editor.Panel.open(`${PACKAGE_NAME}.view`);
+        EditorAdapter.Panel.open(`${PACKAGE_NAME}.view`);
     },
 
     /**
-     * 获取预览面板
-     * @returns {Electron.WebContents | null}
+     * 关闭预览面板
      */
-    getViewPanel() {
-        const panel = Editor.Panel.findWindow(`${PACKAGE_NAME}.view`);
-        if (panel) {
-            const webContents = panel.nativeWin.webContents;
-            return webContents;
+    closeViewPanel() {
+        EditorAdapter.Panel.close(`${PACKAGE_NAME}.view`);
+    },
+
+    /**
+     * 获取预览面板的 WebContents
+     * @returns {Electron.WebContents}
+     */
+    getViewPanelWebContents() {
+        if (PanelManager.viewWebContents && !PanelManager.viewWebContents.isDestroyed()) {
+            return PanelManager.viewWebContents;
         }
         return null;
     },
@@ -50,9 +62,9 @@ const PanelManager = {
             PanelManager.settings.show();
             return;
         }
-        // 窗口高度和位置
-        const winSize = [500, 290],
-            winPos = calcWindowPosition(winSize, 'center');
+        // 窗口尺寸和位置（macOS 标题栏高 28px）
+        const winSize = [500, 350],
+            winPos = calcWindowPositionByFocused(winSize, 'center');
         // 创建窗口
         const win = PanelManager.settings = new BrowserWindow({
             width: winSize[0],
@@ -61,7 +73,6 @@ const PanelManager = {
             minHeight: winSize[1],
             x: winPos[0],
             y: winPos[1] - 100,
-            useContentSize: true,
             frame: true,
             title: `${EXTENSION_NAME} | Cocos Creator`,
             autoHideMenuBar: true,
@@ -78,7 +89,7 @@ const PanelManager = {
                 contextIsolation: false,
             },
         });
-        // 就绪后展示（避免闪烁）
+        // 就绪后（展示，避免闪烁）
         win.on('ready-to-show', () => win.show());
         // 关闭后
         win.on('closed', () => (PanelManager.settings = null));
@@ -86,7 +97,7 @@ const PanelManager = {
         win.webContents.on('before-input-event', (event, input) => {
             if (input.key === 'Escape') PanelManager.closeSettingsPanel();
         });
-        // 调试用的 devtools（detach 模式需要取消失焦自动关闭）
+        // 调试用的 devtools
         // win.webContents.openDevTools({ mode: 'detach' });
         // 加载页面
         const path = join(__dirname, '../renderer/settings/index.html');

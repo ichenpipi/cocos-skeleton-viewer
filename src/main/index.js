@@ -1,19 +1,28 @@
+'use strict';
+
 const MainEvent = require('../eazax/main-event');
 const EditorMainKit = require('../eazax/editor-main-kit');
-const { checkUpdate } = require('../eazax/editor-main-util');
+const { checkUpdate, reload } = require('../eazax/editor-main-util');
 const { openRepository } = require('../eazax/package-util');
 const ConfigManager = require('../common/config-manager');
 const Opener = require('./opener');
 const PanelManager = require('./panel-manager');
+const Updater = require('../eazax/updater');
+const EditorAdapter = require('../common/editor-adapter');
 
 /**
  * 生命周期：加载
  */
 function load() {
+    // 设置仓库分支
+    Updater.branch = 'v3';
     // 监听事件
     EditorMainKit.register();
     MainEvent.on('ready', onReadyEvent);
+    MainEvent.on('close', onCloseEvent);
+    MainEvent.on('reload', onReloadEvent);
     MainEvent.on('select', onSelectEvent);
+    MainEvent.on('view', onViewEvent);
 }
 
 /**
@@ -23,16 +32,47 @@ function unload() {
     // 取消事件监听
     EditorMainKit.unregister();
     MainEvent.removeAllListeners('ready');
+    MainEvent.removeAllListeners('close');
+    MainEvent.removeAllListeners('reload');
     MainEvent.removeAllListeners('select');
+    MainEvent.removeAllListeners('view');
 }
 
 /**
- * （渲染进程）就绪事件回调
+ * （渲染进程）预览面板就绪事件回调
  * @param {Electron.IpcMainEvent} event 
  */
 function onReadyEvent(event) {
+    // 保存预览面板的 WebContents
+    PanelManager.viewWebContents = event.sender;
     // 检查编辑器选中
     Opener.checkEditorCurSelection();
+}
+
+/**
+ * （渲染进程）预览面板关闭事件回调
+ * @param {Electron.IpcMainEvent} event 
+ */
+function onCloseEvent(event) {
+    PanelManager.viewWebContents = null;
+}
+
+/**
+ * （渲染进程）重新加载事件回调
+ * @param {Electron.IpcMainEvent} event 
+ */
+function onReloadEvent(event) {
+    reload();
+}
+
+/**
+ * （渲染进程）预览事件回调
+ * @param {Electron.IpcMainEvent} event 
+ */
+function onViewEvent(event, uuid) {
+    PanelManager.openViewPanel();
+    EditorAdapter.Selection.clear('asset');
+    EditorAdapter.Selection.select('asset', uuid);
 }
 
 /**
@@ -48,74 +88,65 @@ function onSelectEvent(event) {
  * @param {string} type 类型
  * @param {string[]} uuids uuids
  */
-function onEditorSelection(type, uuids) {
-    if (PanelManager.getViewPanel()) {
+function onSelectionSelect(type, uuids) {
+    if (PanelManager.getViewPanelWebContents()) {
         Opener.identifySelection(type, uuids);
     }
 }
 
-module.exports = {
+exports.load = load;
+
+exports.unload = unload;
+
+exports.methods = {
 
     /**
-     * 扩展消息
+     * 打开预览面板
      */
-    messages: {
-
-        /**
-         * 编辑器选中事件回调
-         * @param {Electron.IpcMainEvent} event 
-         * @param {string} type 类型
-         * @param {string[]} uuids uuids
-         */
-        'selection:selected'(event, type, uuids) {
-            onEditorSelection(type, uuids);
-        },
-
-        /**
-         * 打开预览面板
-         */
-        'open-view-panel'() {
-            PanelManager.openViewPanel();
-        },
-
-        /**
-         * 打开设置面板
-         */
-        'open-settings-panel'() {
-            PanelManager.openSettingsPanel();
-        },
-
-        /**
-         * 检查更新
-         */
-        'menu-check-update'() {
-            checkUpdate(true);
-        },
-
-        /**
-         * 版本
-         * @param {*} event 
-         */
-        'menu-version'(event) {
-            openRepository();
-        },
-
-        /**
-         * 场景面板加载完成后
-         * @param {*} event 
-         */
-        'scene:ready'(event) {
-            // 自动检查更新
-            const config = ConfigManager.get();
-            if (config.autoCheckUpdate) {
-                checkUpdate(false);
-            }
-        },
-
+    openViewPanel() {
+        PanelManager.openViewPanel();
     },
 
-    load,
+    /**
+     * 打开设置面板
+     */
+    openSettingsPanel() {
+        PanelManager.openSettingsPanel();
+    },
 
-    unload,
+    /**
+     * 检查更新
+     */
+    menuCheckUpdate() {
+        checkUpdate(true);
+    },
+
+    /**
+     * 版本号
+     */
+    menuVersion() {
+        openRepository();
+    },
+
+    /**
+     * 场景编辑器就绪后
+     */
+    onSceneReady() {
+        // 自动检查更新
+        const config = ConfigManager.get();
+        if (config.autoCheckUpdate) {
+            checkUpdate(false);
+        }
+    },
+
+    /**
+     * 编辑器选中事件回调
+     * @param {'asset' | 'node'} type 类型
+     * @param {string} uuid uuid
+     */
+    onSelectionSelect(type, uuid) {
+        const uuids = EditorAdapter.Selection.getSelected(type);
+        onSelectionSelect(type, uuids);
+    },
 
 };

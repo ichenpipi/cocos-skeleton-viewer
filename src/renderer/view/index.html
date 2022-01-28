@@ -1,159 +1,148 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-</head>
-
-<body>
-    <div ref="app" id="app" style="opacity: 0;">
-        <!-- 内容布局 -->
-        <div ref="layout" class="layout">
-            <!-- 预览区 -->
-            <div class="view">
-                <!-- 画布 -->
-                <canvas ref="canvas" class="canvas"></canvas>
-                <!-- 按钮容器 -->
-                <div class="buttons">
-                    <!-- 资源信息按钮 -->
-                    <div class="button" :title="assetsInfo" @click="onInfoBtnClick">
-                        <svg class="icon" viewBox="0 0 30 30">
-                            <path fill="currentColor"
-                                d="M4.395 25.605c-2.825-2.731-4.579-6.556-4.579-10.789 0-8.284 6.716-15 15-15 4.234 0 8.058 1.754 10.785 4.575l0.004 0.004c2.605 2.695 4.211 6.37 4.211 10.421 0 8.284-6.716 15-15 15-4.050 0-7.726-1.605-10.425-4.215l0.004 0.004zM13.5 16.5v6h3v-9h-3v3zM13.5 7.5v3h3v-3h-3z">
-                            </path>
-                        </svg>
-                    </div>
-                    <!-- 选择资源按钮 -->
-                    <div class="button" :title="t('selectAssets')" @click="onSelectBtnClick">
-                        <svg class="icon" viewBox="0 0 30 30">
-                            <path fill="currentColor"
-                                d="M15 30c-8.284 0-15-6.716-15-15s6.716-15 15-15v0c8.284 0 15 6.716 15 15s-6.716 15-15 15v0zM11.82 11.82l-5.31 11.67 11.67-5.31 5.31-11.67-11.67 5.31zM15 16.5c-0.828 0-1.5-0.672-1.5-1.5s0.672-1.5 1.5-1.5v0c0.828 0 1.5 0.672 1.5 1.5s-0.672 1.5-1.5 1.5v0z">
-                            </path>
-                        </svg>
-                    </div>
-                    <!-- 重置按钮 -->
-                    <div class="button" :title="t('reset')" @click="onResetBtnClick">
-                        <svg class="icon" viewBox="0 0 30 30">
-                            <path fill="currentColor"
-                                d="M4.395 25.605c-2.825-2.731-4.579-6.556-4.579-10.789 0-8.284 6.716-15 15-15 4.234 0 8.058 1.754 10.785 4.575l0.004 0.004c2.605 2.695 4.211 6.37 4.211 10.421 0 8.284-6.716 15-15 15-4.050 0-7.726-1.605-10.425-4.215l0.004 0.004zM17.1 15l4.245-4.245-2.115-2.115-4.23 4.245-4.245-4.245-2.115 2.115 4.245 4.245-4.245 4.245 2.115 2.115 4.245-4.245 4.245 4.245 2.115-2.115-4.245-4.245z">
-                            </path>
-                        </svg>
-                    </div>
+<div ref="app" id="app" style="opacity: 0;">
+    <!-- 内容布局 -->
+    <div ref="layout" class="layout">
+        <!-- 预览区 -->
+        <div class="view">
+            <!-- 画布 -->
+            <canvas ref="canvas" class="canvas"></canvas>
+            <!-- 按钮容器 -->
+            <div class="buttons">
+                <!-- 资源信息按钮 -->
+                <div class="button" :title="assetsInfo" @click="onInfoBtnClick">
+                    <svg class="icon" viewBox="0 0 30 30">
+                        <path fill="currentColor"
+                            d="M4.395 25.605c-2.825-2.731-4.579-6.556-4.579-10.789 0-8.284 6.716-15 15-15 4.234 0 8.058 1.754 10.785 4.575l0.004 0.004c2.605 2.695 4.211 6.37 4.211 10.421 0 8.284-6.716 15-15 15-4.050 0-7.726-1.605-10.425-4.215l0.004 0.004zM13.5 16.5v6h3v-9h-3v3zM13.5 7.5v3h3v-3h-3z">
+                        </path>
+                    </svg>
                 </div>
-                <!-- 运行时版本 -->
-                <div class="version">
-                    <span :title="t('spineRuntime') + ': ' + version">{{ t('spineRuntime') }}: {{ version }}</span>
+                <!-- 选择资源按钮 -->
+                <div class="button" :title="t('selectAssets')" @click="onSelectBtnClick">
+                    <svg class="icon" viewBox="0 0 30 30">
+                        <path fill="currentColor"
+                            d="M15 30c-8.284 0-15-6.716-15-15s6.716-15 15-15v0c8.284 0 15 6.716 15 15s-6.716 15-15 15v0zM11.82 11.82l-5.31 11.67 11.67-5.31 5.31-11.67-11.67 5.31zM15 16.5c-0.828 0-1.5-0.672-1.5-1.5s0.672-1.5 1.5-1.5v0c0.828 0 1.5 0.672 1.5 1.5s-0.672 1.5-1.5 1.5v0z">
+                        </path>
+                    </svg>
                 </div>
-                <!-- 颜色 -->
-                <div class="color">
-                    <!-- 取色器 -->
-                    <input type="color" v-model="canvasColor" :title="t('canvasColor')" />
-                </div>
-                <!-- 位置 -->
-                <div class="position">
-                    <!-- 文本 -->
-                    <div class="label" :title="offset">{{ offset }}</div>
-                    <!-- 复位按钮 -->
-                    <div class="button" :title="t('reposition')" @click="onRepositionBtnClick">
-                        <svg class="icon" viewBox="0 0 30 30">
-                            <path fill="currentColor"
-                                d="M15 30s-10.5-13.695-10.5-19.5c0-5.799 4.701-10.5 10.5-10.5s10.5 4.701 10.5 10.5v0c0 5.805-10.5 19.5-10.5 19.5zM15 13.5c1.657 0 3-1.343 3-3s-1.343-3-3-3v0c-1.657 0-3 1.343-3 3s1.343 3 3 3v0z">
-                            </path>
-                        </svg>
-                    </div>
+                <!-- 重置按钮 -->
+                <div class="button" :title="t('reset')" @click="onResetBtnClick">
+                    <svg class="icon" viewBox="0 0 30 30">
+                        <path fill="currentColor"
+                            d="M4.395 25.605c-2.825-2.731-4.579-6.556-4.579-10.789 0-8.284 6.716-15 15-15 4.234 0 8.058 1.754 10.785 4.575l0.004 0.004c2.605 2.695 4.211 6.37 4.211 10.421 0 8.284-6.716 15-15 15-4.050 0-7.726-1.605-10.425-4.215l0.004 0.004zM17.1 15l4.245-4.245-2.115-2.115-4.23 4.245-4.245-4.245-2.115 2.115 4.245 4.245-4.245 4.245 2.115 2.115 4.245-4.245 4.245 4.245 2.115-2.115-4.245-4.245z">
+                        </path>
+                    </svg>
                 </div>
             </div>
-            <!-- 选项区 -->
-            <div ref="properties" class="properties">
-                <!-- 预览缩放 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('viewScale') }}</span>
-                    </div>
-                    <div class="content">
-                        <input type="number" step="0.1" v-model="viewScale" />
-                    </div>
-                </div>
-                <!-- 皮肤 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('skin') }}</span>
-                    </div>
-                    <div class="content">
-                        <select v-model="skin">
-                            <option v-for="name in skins" :key="name" :value="name">{{ name }}</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- 动画 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('animation') }}</span>
-                    </div>
-                    <div class="content">
-                        <select v-model="animation">
-                            <option v-for="name in animations" :key="name" :value="name">{{ name }}</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- 循环 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('loop') }}</span>
-                    </div>
-                    <div class="content">
-                        <input type="checkbox" v-model="loop" />
-                    </div>
-                </div>
-                <!-- 预乘 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('premultipliedAlpha') }}</span>
-                    </div>
-                    <div class="content">
-                        <input type="checkbox" v-model="premultipliedAlpha" />
-                    </div>
-                </div>
-                <!-- 时间缩放 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('timeScale') }}</span>
-                    </div>
-                    <div class="content">
-                        <input type="number" step="0.1" v-model="timeScale" />
-                    </div>
-                </div>
-                <!-- 绘制骨骼 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('drawBones') }}</span>
-                    </div>
-                    <div class="content">
-                        <input type="checkbox" v-model="drawBones" />
-                    </div>
-                </div>
-                <!-- 绘制包围盒 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('drawBoundingBoxes') }}</span>
-                    </div>
-                    <div class="content">
-                        <input type="checkbox" v-model="drawBoundingBoxes" />
-                    </div>
-                </div>
-                <!-- 绘制网格三角形 -->
-                <div class="property">
-                    <div class="label">
-                        <span class="text">{{ t('drawMeshTriangles') }}</span>
-                    </div>
-                    <div class="content">
-                        <input type="checkbox" v-model="drawMeshTriangles" />
-                    </div>
+            <!-- 运行时版本 -->
+            <div class="version">
+                <span :title="t('spineRuntime') + ': ' + version">{{ t('spineRuntime') }}: {{ version }}</span>
+            </div>
+            <!-- 颜色 -->
+            <div class="color">
+                <!-- 取色器 -->
+                <input type="color" v-model="canvasColor" :title="t('canvasColor')" />
+            </div>
+            <!-- 位置 -->
+            <div class="position">
+                <!-- 文本 -->
+                <div class="label" :title="offset">{{ offset }}</div>
+                <!-- 复位按钮 -->
+                <div class="button" :title="t('reposition')" @click="onRepositionBtnClick">
+                    <svg class="icon" viewBox="0 0 30 30">
+                        <path fill="currentColor"
+                            d="M15 30s-10.5-13.695-10.5-19.5c0-5.799 4.701-10.5 10.5-10.5s10.5 4.701 10.5 10.5v0c0 5.805-10.5 19.5-10.5 19.5zM15 13.5c1.657 0 3-1.343 3-3s-1.343-3-3-3v0c-1.657 0-3 1.343-3 3s1.343 3 3 3v0z">
+                        </path>
+                    </svg>
                 </div>
             </div>
         </div>
-        <br>
+        <!-- 选项区 -->
+        <div ref="properties" class="properties">
+            <!-- 预览缩放 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('viewScale') }}</span>
+                </div>
+                <div class="content">
+                    <input type="number" step="0.1" v-model="viewScale" />
+                </div>
+            </div>
+            <!-- 皮肤 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('skin') }}</span>
+                </div>
+                <div class="content">
+                    <select v-model="skin">
+                        <option v-for="name in skins" :key="name" :value="name">{{ name }}</option>
+                    </select>
+                </div>
+            </div>
+            <!-- 动画 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('animation') }}</span>
+                </div>
+                <div class="content">
+                    <select v-model="animation">
+                        <option v-for="name in animations" :key="name" :value="name">{{ name }}</option>
+                    </select>
+                </div>
+            </div>
+            <!-- 循环 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('loop') }}</span>
+                </div>
+                <div class="content">
+                    <input type="checkbox" v-model="loop" />
+                </div>
+            </div>
+            <!-- 预乘 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('premultipliedAlpha') }}</span>
+                </div>
+                <div class="content">
+                    <input type="checkbox" v-model="premultipliedAlpha" />
+                </div>
+            </div>
+            <!-- 时间缩放 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('timeScale') }}</span>
+                </div>
+                <div class="content">
+                    <input type="number" step="0.1" v-model="timeScale" />
+                </div>
+            </div>
+            <!-- 绘制骨骼 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('drawBones') }}</span>
+                </div>
+                <div class="content">
+                    <input type="checkbox" v-model="drawBones" />
+                </div>
+            </div>
+            <!-- 绘制包围盒 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('drawBoundingBoxes') }}</span>
+                </div>
+                <div class="content">
+                    <input type="checkbox" v-model="drawBoundingBoxes" />
+                </div>
+            </div>
+            <!-- 绘制网格三角形 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('drawMeshTriangles') }}</span>
+                </div>
+                <div class="content">
+                    <input type="checkbox" v-model="drawMeshTriangles" />
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-
-</html>
+    <br>
+</div>

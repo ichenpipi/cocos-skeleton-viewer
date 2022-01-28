@@ -1,10 +1,18 @@
 #app {
+  --background-color: #474747;
+  --content-color: #2f2f2f;
+  --font-color: #bdbdbd;
+  --hover-color: #09f;
+  --active-color: #fd942b;
+}
+
+#app {
   width: 100%;
   height: 100%;
-  background-color: #454545;
+  background-color: var(--background-color);
   box-sizing: border-box;
   padding: 10px;
-  color: #bdbdbd;
+  color: var(--font-color);
   animation: fade-in 0.3s;
   animation-fill-mode: forwards;
 }
@@ -31,7 +39,7 @@
 .view {
   width: 100%;
   min-height: 0;
-  background-color: #4c4c4c;
+  background-color: var(--content-color);
   position: relative;
   flex: 1;
 }
@@ -40,7 +48,7 @@
 .canvas {
   width: 100%;
   height: 100%;
-  background-color: #4c4c4c;
+  background-color: var(--content-color);
 }
 
 /* 版本号 */
@@ -52,7 +60,8 @@
   right: 6px;
   line-height: 16px;
   font-size: 11px;
-  color: #bdbdbd;
+  color: var(--font-color);
+  user-select: none;
 }
 
 /* 按钮容器 */
@@ -76,7 +85,7 @@
 .button {
   width: 16px;
   height: 16px;
-  color: #bdbdbd;
+  color: var(--font-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,12 +95,12 @@
 /* 信息,按钮:虚指 */
 .info:hover,
 .button:hover {
-  color: #09f;
+  color: var(--hover-color);
 }
 
 /* 按钮:激活 */
 .button:active {
-  color: #fd942b;
+  color: var(--active-color);
 }
 
 /* 信息,按钮 图标 */
@@ -117,6 +126,7 @@
   margin-right: 2px;
   line-height: 12px;
   font-size: 11px;
+  user-select: none;
 }
 
 /* 位置 按钮 */

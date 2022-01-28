@@ -40,11 +40,21 @@
                     <input v-model="customKey" :placeholder="t('customKeyPlaceholder')" />
                 </div>
             </div>
+            <!-- 窗口置顶 -->
+            <div class="property">
+                <div class="label">
+                    <span class="text">{{ t('alwaysOnTop') }}</span>
+                    <span class="tooltip">{{ t('alwaysOnTopTooltip') }}</span>
+                </div>
+                <div class="content">
+                    <input type="checkbox" v-model="alwaysOnTop" />
+                </div>
+            </div>
             <!-- 自动检查更新 -->
             <div class="property">
                 <div class="label">
-                    <span class="text">{{ t('autoCheck') }}</span>
-                    <span class="tooltip">{{ t('autoCheckTooltip') }}</span>
+                    <span class="text">{{ t('autoCheckUpdate') }}</span>
+                    <span class="tooltip">{{ t('autoCheckUpdateTooltip') }}</span>
                 </div>
                 <div class="content">
                     <input type="checkbox" v-model="autoCheckUpdate" />

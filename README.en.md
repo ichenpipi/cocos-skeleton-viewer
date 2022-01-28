@@ -94,7 +94,7 @@ Click on *Extension -> Skeleton Viewer -> View* option to open the view panel.
 
 Click on *Extension -> Skeleton Viewer -> Settings* option to open the setting panel.
 
-In the setting panel, you can choose a hotkey(shortcut, for opening the view panel quickly) in preset list, or customize one by yourself.
+In the setting panel, you can choose a shortcut key(for opening the view panel quickly) in preset list, or customize one by yourself.
 
 One thing you should know, not every keys/keys-combinations can be used, because some keys/keys-combinations have been used by the system or Cocos Creator.
 

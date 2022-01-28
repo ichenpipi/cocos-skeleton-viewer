@@ -1,28 +1,25 @@
 const { dialog } = require('electron');
 const Fs = require('fs');
 const Path = require('path');
+const EditorAdapter = require('../common/editor-adapter');
 const { print, translate } = require('../eazax/editor-main-util');
 const MainEvent = require('../eazax/main-event');
-const PackageUtil = require('../eazax/package-util');
 const PanelManager = require('./panel-manager');
 
-/** 包名 */
-const PACKAGE_NAME = PackageUtil.name;
-
+/**
+ * 资源检索器
+ */
 const Opener = {
 
     /**
      * 编辑器选择
-     * @param {string} type 
+     * @param {'asset' | 'node'} type 
      * @param {string[]} uuids 
      */
     async identifySelection(type, uuids) {
-        // 选中资源
-        if (type === 'asset') {
+        if (type === 'asset') {         // 选中资源
             Opener.identifyByUuids(uuids);
-        }
-        // 选中节点
-        else if (type === 'node') {
+        } else if (type === 'node') {   // 选中节点
             const skeletonUuid = await Opener.querySkeletonOnNode(uuids[0]);
             if (skeletonUuid) {
                 Opener.identifyByUuids([skeletonUuid]);
@@ -38,9 +35,10 @@ const Opener = {
      * 检查编辑器当前选中
      */
     checkEditorCurSelection() {
-        const { type, id } = Editor.Selection.curGlobalActivate();
-        if (type && id) {
-            Opener.identifySelection(type, [id]);
+        const type = EditorAdapter.Selection.getSelectedType(),
+            uuids = EditorAdapter.Selection.getSelected(type);
+        if (type && uuids && uuids.length > 0) {
+            Opener.identifySelection(type, uuids);
         } else {
             Opener.updateView(null);
         }
@@ -48,15 +46,21 @@ const Opener = {
 
     /**
      * 查找节点上引用的骨骼资源
-     * @param {string} uuid 
+     * @param {string} nodeUuid 
      * @returns {Promise<string>} 
      */
-    querySkeletonOnNode(uuid) {
-        return new Promise(res => {
-            Editor.Scene.callSceneScript(PACKAGE_NAME, 'query-skeleton', uuid, (error, uuid) => {
-                res(error ? null : uuid);
-            });
-        });
+    async querySkeletonOnNode(nodeUuid) {
+        const node = await Editor.Message.request('scene', 'query-node', nodeUuid);
+        if (node && node['__comps__']) {
+            const components = node['__comps__'];
+            for (let i = 0; i < components.length; i++) {
+                if (components[i].type === 'sp.Skeleton') {
+                    const uuid = components[i].value.skeletonData.value.uuid;
+                    return (uuid !== '' ? uuid : null);
+                }
+            }
+        }
+        return null;
     },
 
     /**
@@ -85,40 +89,36 @@ const Opener = {
      * 通过 uuid 识别资源
      * @param {string[]} uuids 
      */
-    identifyByUuids(uuids) {
+    async identifyByUuids(uuids) {
         // 资源路径
-        let spinePath, texturePath, atlasPath;
+        let skeletonPath, texturePath, atlasPath;
         // 遍历选中的资源 uuid
         for (let i = 0; i < uuids.length; i++) {
-            const assetInfo = Editor.assetdb.assetInfoByUuid(uuids[i]),
-                { type, path } = assetInfo;
-            if (type === 'spine') {
-                spinePath = path;   // Spine 资源
-            } else if (type === 'texture') {
-                texturePath = path; // 纹理资源
-            } else if (path.endsWith('.atlas') || path.endsWith('.txt')) {
-                atlasPath = path;   // 图集资源
+            const assetInfo = await EditorAdapter.getAssetInfoByUuid(uuids[0]),
+                { type, file } = assetInfo;
+            if (type === 'sp.SkeletonData') {
+                skeletonPath = file;   // 骨骼资源
+            } else if (type === 'cc.ImageAsset') {
+                texturePath = file; // 纹理资源
+            } else if (file.endsWith('.atlas') || file.endsWith('.txt')) {
+                atlasPath = file;   // 图集资源
             }
             // 只识别一套资源
-            if (spinePath && texturePath && atlasPath) {
+            if (skeletonPath && texturePath && atlasPath) {
                 break;
             }
         }
-        // 是否有选中 Spine 资源
-        if (!spinePath) {
+        // 未选中骨骼资源
+        // if (!skeletonPath) {
+        //     return;
+        // }
+        // 无效
+        if (!skeletonPath && !texturePath && !atlasPath) {
             Opener.updateView(null);
             return;
         }
-        // 是否有选中图集资源
-        if (!texturePath) {
-            // 读取 Spine 资源的 meta 信息中获取关联的纹理资源
-            const spineMeta = Editor.assetdb.loadMetaByPath(spinePath);
-            if (spineMeta.textures[0]) {
-                texturePath = Editor.assetdb.uuidToFspath(spineMeta.textures[0]);
-            }
-        }
         // 处理路径
-        let paths = { spinePath, texturePath, atlasPath };
+        const paths = { skeletonPath, texturePath, atlasPath };
         const assets = Opener.collectAssets(paths);
         Opener.updateView(assets);
     },
@@ -129,7 +129,7 @@ const Opener = {
      */
     identifyByPaths(paths) {
         // 资源路径
-        let spinePath, texturePath, atlasPath;
+        let skeletonPath, texturePath, atlasPath;
         // 遍历选中的文件路径
         for (let i = 0; i < paths.length; i++) {
             const path = paths[i],
@@ -137,7 +137,7 @@ const Opener = {
             switch (extname) {
                 case '.json':
                 case '.skel': {
-                    spinePath = path;
+                    skeletonPath = path;
                     break;
                 }
                 case '.png': {
@@ -151,65 +151,85 @@ const Opener = {
                 }
             }
             // 只识别一套资源
-            if (spinePath && texturePath && atlasPath) {
+            if (skeletonPath && texturePath && atlasPath) {
                 break;
             }
         }
-        // 是否有选中 spine 资源
-        if (!spinePath) {
-            print('warn', translate('noSkeleton'));
+        // 未选中骨骼资源
+        // if (!skeletonPath) {
+        //     print('warn', translate('noSkeleton'));
+        //     return;
+        // }
+        // 无效
+        if (!skeletonPath && !texturePath && !atlasPath) {
+            // print('warn', translate('noSkeleton'));
             return;
         }
         // 处理路径
-        paths = { spinePath, texturePath, atlasPath };
+        paths = { skeletonPath, texturePath, atlasPath };
         const assets = Opener.collectAssets(paths);
         Opener.updateView(assets);
     },
 
     /**
      * 收集资源
-     * @param {{ spinePath: string, texturePath: string, atlasPath: string }} paths 资源路径
+     * @param {{ skeletonPath: string, texturePath: string, atlasPath: string }} paths 资源路径
      */
     collectAssets(paths) {
-        let { spinePath, texturePath, atlasPath } = paths;
+        let { skeletonPath, texturePath, atlasPath } = paths;
+        const testPath = skeletonPath || texturePath || atlasPath;
+        // 骨骼资源
+        if (!skeletonPath) {
+            // 暴力查找
+            skeletonPath = Opener.getRelatedFile(testPath, 'json');
+            // 还没有的话再试试 skel 格式
+            if (!skeletonPath) {
+                skeletonPath = Opener.getRelatedFile(testPath, 'skel');
+            }
+            // 找不到骨骼啊
+            if (!skeletonPath) {
+                // print('warn', translate('noSkeleton'));
+                return null;
+            }
+        }
         // 纹理资源
         if (!texturePath) {
             // 暴力查找
-            texturePath = Opener.getRelatedFile(spinePath, 'png');
-        }
-        // 找不到纹理啊
-        if (!texturePath) {
-            print('warn', translate('noTexture'));
-            return null;
+            texturePath = Opener.getRelatedFile(testPath, 'png');
+            // 找不到纹理啊
+            if (!texturePath) {
+                print('warn', translate('noTexture'));
+                return null;
+            }
         }
         // 图集资源
         if (!atlasPath) {
             // 暴力查找
-            atlasPath = Opener.getRelatedFile(spinePath, 'atlas');
+            atlasPath = Opener.getRelatedFile(testPath, 'atlas');
             // 还没有的话再试试 txt 格式
             if (!atlasPath) {
-                atlasPath = Opener.getRelatedFile(spinePath, 'txt');
+                atlasPath = Opener.getRelatedFile(testPath, 'txt');
             }
             // 还没有的话再试试 atlas.txt 格式
             if (!atlasPath) {
-                atlasPath = Opener.getRelatedFile(spinePath, 'atlas.txt');
+                atlasPath = Opener.getRelatedFile(testPath, 'atlas.txt');
+            }
+            // 找不到图集啊
+            if (!atlasPath) {
+                print('warn', translate('noAtlas'));
+                return null;
             }
         }
-        // 找不到图集啊
-        if (!atlasPath) {
-            print('warn', translate('noAtlas'));
-            return null;
-        }
         // 文件类型（json 或 skel）
-        const spineType = Path.extname(spinePath);
+        const skeletonType = Path.extname(skeletonPath);
         // 打包资源信息
         const assets = {
             // 目录路径
             dir: undefined,
             // 骨骼数据（JSON）
-            json: (spineType === '.json') ? spinePath : undefined,
+            json: (skeletonType === '.json') ? skeletonPath : undefined,
             // 骨骼数据（二进制）
-            skel: (spineType === '.skel') ? spinePath : undefined,
+            skel: (skeletonType === '.skel') ? skeletonPath : undefined,
             // 纹理
             png: texturePath,
             // 图集
@@ -247,7 +267,7 @@ const Opener = {
      * @param {{ dir: string, json: string, atlas: string, png: string } | null} assets 
      */
     updateView(assets) {
-        const webContents = PanelManager.getViewPanel();
+        const webContents = PanelManager.getViewPanelWebContents();
         if (webContents) {
             MainEvent.send(webContents, 'assets-selected', assets);
         }

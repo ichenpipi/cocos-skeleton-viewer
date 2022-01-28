@@ -39,6 +39,8 @@ const App = {
         const selectKey = ref('');
         // 自定义
         const customKey = ref('');
+        // 窗口置顶
+        const alwaysOnTop = ref(true);
         // 自动检查更新
         const autoCheckUpdate = ref(false);
 
@@ -66,27 +68,31 @@ const App = {
          */
         function getConfig() {
             const config = ConfigManager.get();
-            if (!config) return;
+            if (!config) {
+                return;
+            }
+            // 窗口置顶
+            alwaysOnTop.value = config.alwaysOnTop;
             // 自动检查更新
             autoCheckUpdate.value = config.autoCheckUpdate;
             // 快捷键
-            const hotkey = config.hotkey;
-            if (!hotkey || hotkey === '') {
+            const shortcutKey = config.shortcutKey;
+            if (!shortcutKey || shortcutKey === '') {
                 selectKey.value = '';
                 customKey.value = '';
                 return;
             }
             // 预设快捷键
-            for (let i = 0, l = presets.length; i < l; i++) {
-                if (presets[i].key === hotkey) {
-                    selectKey.value = hotkey;
+            for (let i = 0, l = presets.value.length; i < l; i++) {
+                if (presets.value[i].key === shortcutKey) {
+                    selectKey.value = shortcutKey;
                     customKey.value = '';
                     return;
                 }
             }
             // 自定义快捷键
             selectKey.value = 'custom';
-            customKey.value = hotkey;
+            customKey.value = shortcutKey;
         }
 
         /**
@@ -94,8 +100,9 @@ const App = {
          */
         function setConfig() {
             const config = {
+                alwaysOnTop: alwaysOnTop.value,
                 autoCheckUpdate: autoCheckUpdate.value,
-                hotkey: null,
+                shortcutKey: null,
             };
             if (selectKey.value === 'custom') {
                 // 自定义输入是否有效
@@ -109,12 +116,14 @@ const App = {
                     EditorRendererKit.print('warn', translate('quoteError'));
                     return;
                 }
-                config.hotkey = customKey.value;
+                config.shortcutKey = customKey.value;
             } else {
-                config.hotkey = selectKey.value;
+                config.shortcutKey = selectKey.value;
             }
             // 保存到本地
             ConfigManager.set(config);
+            // 重新加载扩展
+            RendererEvent.send('reload');
         }
 
         /**
@@ -164,6 +173,7 @@ const App = {
             presets,
             selectKey,
             customKey,
+            alwaysOnTop,
             autoCheckUpdate,
             repositoryUrl,
             packageName,
