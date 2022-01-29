@@ -6,7 +6,11 @@
 
 **Used to preview skeleton animation. Provide a stand-alone panel and can also be attached to the editor window.**
 
-*Currently, only versions 3.5~4.0 of Spine resources are supported. DragonBone resources would be supported in the future.*
+*Currently, only versions 3.5~4.0 of Spine resources are supported.*
+
+> 🎭 Attention
+>
+> Current branch is for **Cocos Creator 3.x**, if you're looking for **Cocos Creator 2.x** version ,please switch to branch `master`, Click [here](https://gitee.com/ifaswind/ccc-skeleton-viewer/tree/master/) to switch branch immediately.
 
 
 
@@ -16,7 +20,7 @@ This extension is an open source project, here is the git repository: [https://g
 
 If you like this project, don't forget to star [![star](https://gitee.com/ifaswind/ccc-skeleton-viewer/badge/star.svg?theme=dark)](https://gitee.com/ifaswind/ccc-skeleton-viewer/stargazers)!
 
-*If you have any usage problems, just create an issue on Gitee or add my WeChat `im_chenpipi` and leave a message.*
+*If you have any usage problems, just submit an issue or contact me with WeChat `im_chenpipi`.*
 
 
 
@@ -46,7 +50,7 @@ If you like this project, don't forget to star [![star](https://gitee.com/ifaswi
 
 Platform: Windows、macOS
 
-Engine: Cocos Creator 2.x
+Engine: Cocos Creator 3.x
 
 
 
@@ -123,23 +127,3 @@ One thing you should know, not every keys/keys-combinations can be used, because
 ## License
 
 This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-
-
----
-
-
-
-# 公众号
-
-## 菜鸟小栈
-
-😺 我是陈皮皮，一个还在不断学习的游戏开发者，一个热爱分享的 Cocos Star Writer。
-
-🎨 这是我的个人公众号，专注但不仅限于游戏开发和前端技术分享。
-
-💖 每一篇原创都非常用心，你的关注就是我原创的动力！
-
-> Input and output.
-
-![](https://gitee.com/ifaswind/image-storage/raw/master/weixin/official-account.png)
